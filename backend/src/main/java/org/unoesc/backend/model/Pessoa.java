@@ -1,9 +1,14 @@
 package org.unoesc.backend.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+
 import jakarta.persistence.*;
+import java.util.*;
+import org.unoesc.backend.model.*;
 
 @Entity
+@Table(name = "pessoa")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Pessoa {
     @Id
@@ -19,22 +24,20 @@ public class Pessoa {
     @Column(nullable = false)
     private LocalDate dataNascimento;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    @Column(nullable = false)
-    private String senha;
-
     @Column(nullable = false)
     private Boolean statusAtivo = false;
 
-    public Pessoa(Long idPessoa, String nomeCompleto, String cpf, LocalDate dataNascimento, String email, String senha, Boolean statusAtivo) {
+    @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Endereco> enderecos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Contato> contatos = new ArrayList<>();
+
+    public Pessoa(Long idPessoa, String nomeCompleto, String cpf, LocalDate dataNascimento, Boolean statusAtivo) {
         this.idPessoa = idPessoa;
         this.nomeCompleto = nomeCompleto;
         this.cpf = cpf;
         this.dataNascimento = dataNascimento;
-        this.email = email;
-        this.senha = senha;
         this.statusAtivo = statusAtivo;
     }
 
@@ -72,27 +75,35 @@ public class Pessoa {
         this.dataNascimento = dataNascimento;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
     public Boolean getStatusAtivo() {
         return statusAtivo;
     }
 
     public void setStatusAtivo(Boolean statusAtivo) {
         this.statusAtivo = statusAtivo;
+    }
+
+    public List<Endereco> getEnderecos() {
+        return enderecos;
+    }
+
+    public void setEnderecos(List<Endereco> enderecos) {
+        this.enderecos = enderecos;
+    }
+
+    public List<Contato> getContatos() {
+        return contatos;
+    }
+
+    public void setContatos(List<Contato> contatos) {
+        this.contatos = contatos;
+    }
+
+    public void addEndereco(Endereco endereco) {
+        this.enderecos.add(endereco);
+    }
+
+    public void addContato(Contato contato) {
+        this.contatos.add(contato);
     }
 }
