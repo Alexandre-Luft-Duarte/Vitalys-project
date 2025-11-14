@@ -3,7 +3,6 @@ package org.unoesc.backend.model;
 public enum StatusAtendimento {
     AGUARDANDO("Aguardando"),
     EM_ATENDIMENTO("Em Atendimento"),
-    INTERNADO("Internado"),
     FINALIZADO("Finalizado");
 
     public final String status;

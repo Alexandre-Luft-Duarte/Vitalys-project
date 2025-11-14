@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "paciente")
-@PrimaryKeyJoinColumn(name = "idPessoa")
+@PrimaryKeyJoinColumn(name = "id_pessoa")
 public class Paciente extends Pessoa{
     @Column(nullable = true)
     private String descricaoMedica;

@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "recepcionista")
-@PrimaryKeyJoinColumn(name = "idPessoa")
+@PrimaryKeyJoinColumn(name = "id_pessoa")
 public class Recepcionista extends Usuario{
 
     public Recepcionista(Long idPessoa, String nomeCompleto, String cpf, LocalDate dataNascimento, Boolean statusAtivo, String email, String senha) {

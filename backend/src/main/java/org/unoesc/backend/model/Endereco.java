@@ -28,7 +28,8 @@ public class Endereco {
     @Column(nullable = true)
     private String cep;
 
-    @JoinColumn(name = "idPessoa")
+    @JoinColumn(name = "id_pessoa")
+    @ManyToOne
     private Pessoa pessoa;
 
     public Endereco(Long idEndereco, String cidade, String estado, String logradouro, Integer numero, String bairro, String cep) {

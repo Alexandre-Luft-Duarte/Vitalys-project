@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "usuario")
-@PrimaryKeyJoinColumn(name = "idPessoa")
+@PrimaryKeyJoinColumn(name = "id_pessoa")
 public class Usuario extends Pessoa{
     @Column(nullable = false)
     private String email;
@@ -21,8 +21,7 @@ public class Usuario extends Pessoa{
         this.senha = senha;
     }
 
-    public Usuario() {
-    }
+    public Usuario() {}
 
     public String getEmail() {
         return email;

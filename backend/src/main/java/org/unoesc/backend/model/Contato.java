@@ -13,7 +13,8 @@ public class Contato {
     @Column(nullable = false)
     private String telefone;
 
-    @JoinColumn(name = "idPessoa")
+    @JoinColumn(name = "id_pessoa")
+    @ManyToOne
     private Pessoa pessoa;
 
     public Contato(Long idContato, String telefone) {
