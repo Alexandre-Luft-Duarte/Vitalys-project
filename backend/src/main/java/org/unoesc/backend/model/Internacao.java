@@ -34,10 +34,14 @@ public class Internacao {
     @JoinColumn(name = "id_departamento", nullable = false)
     private Departamento departamento;
 
+    @OneToOne
+    @JoinColumn(name = "id_atendimento", nullable = false, unique = true)
+    private Atendimento atendimento;
+
     @OneToMany(mappedBy = "internacao", cascade = CascadeType.ALL)
     private List<EvolucaoInternacao> evolucoesInternacao = new ArrayList<>();
 
-    public Internacao(Long idInternacao, LocalDateTime dataEntrada, LocalDateTime dataSaida, StatusInternacao status, Paciente paciente, Profissional profissional, List<EvolucaoInternacao> evolucoesInternacao, Departamento departamento) {
+    public Internacao(Long idInternacao, LocalDateTime dataEntrada, LocalDateTime dataSaida, StatusInternacao status, Paciente paciente, Profissional profissional, List<EvolucaoInternacao> evolucoesInternacao, Departamento departamento, Atendimento atendimento) {
         this.idInternacao = idInternacao;
         this.dataEntrada = dataEntrada;
         this.dataSaida = dataSaida;
@@ -46,6 +50,15 @@ public class Internacao {
         this.profissional = profissional;
         this.evolucoesInternacao = evolucoesInternacao;
         this.departamento = departamento;
+        this.atendimento = atendimento;
+    }
+
+    public Atendimento getAtendimento() {
+        return atendimento;
+    }
+
+    public void setAtendimento(Atendimento atendimento) {
+        this.atendimento = atendimento;
     }
 
     public Internacao() {}

@@ -27,9 +27,12 @@ public class Atendimento {
     private Profissional profissional;
 
     @ManyToOne
+    private Recepcionista recepcionista;
+
+    @ManyToOne
     private Departamento departamento;
 
-    @OneToMany(mappedBy = "atendimento", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "atendimento", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnotacaoMedica> anotacoesMedicas = new ArrayList<>();
 
     public Atendimento(Long idAtendimento, LocalDateTime dataHora, StatusAtendimento status, Paciente paciente, Profissional profissional, Departamento departamento, List<AnotacaoMedica> anotacoesMedicas) {
