@@ -8,18 +8,18 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+} from "./ui/dialog.tsx";
+import { Button } from "./ui/button.tsx";
+import { Label } from "./ui/label.tsx";
+import { Textarea } from "./ui/textarea.tsx";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
+} from "./ui/select.tsx";
+import { useToast } from "../hooks/use-toast.ts";
 import { ClipboardPlus, AlertTriangle } from "lucide-react";
 
 const internacaoSchema = z.object({

@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "../components/ui/button.tsx";
+import { Textarea } from "../components/ui/textarea.tsx";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs.tsx";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card.tsx";
+import { Badge } from "../components/ui/badge.tsx";
+import { Separator } from "../components/ui/separator.tsx";
+import { ScrollArea } from "../components/ui/scroll-area.tsx";
 import {
     UserCircle,
     Calendar,
@@ -19,9 +19,9 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
-import SolicitarInternacaoModal from "@/components/SolicitarInternacaoModal";
-import RegistrarAltaMedicaModal from "@/components/RegistrarAltaMedicaModal";
+import { useToast } from "../hooks/use-toast.ts";
+import SolicitarInternacaoModal from "../components/SolicitarInternacaoModal.tsx";
+import RegistrarAltaMedicaModal from "../components/RegistrarAltaMedica.tsx";
 
 // Dados do paciente (exemplo)
 const pacienteAtual = {
