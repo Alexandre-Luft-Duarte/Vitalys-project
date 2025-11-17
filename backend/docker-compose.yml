@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  # 1. O serviço do banco de dados
+  db-vitalys:
+    image: postgres:15-alpine  # Usando uma versão específica e leve
+    container_name: vitalys_postgres_db
+
+    # 2. Credenciais e nome do banco
+    # O Spring vai usar exatamente isso para conectar
+    environment:
+      POSTGRES_USER: vitalys
+      POSTGRES_PASSWORD: vitalys
+      POSTGRES_DB: vitalysdb
+
+    # 3. Mapeamento da porta
+    # Expõe a porta 5432 do contêiner para a porta 5432 da sua máquina
+    ports:
+      - "5432:5432"
+
+    # 4. O Volume para persistir os dados
+    volumes:
+      - vitalys-data:/var/lib/postgresql/data
+
+# 5. Definição do volume que será gerenciado pelo Docker
+volumes:
+  vitalys-data:
