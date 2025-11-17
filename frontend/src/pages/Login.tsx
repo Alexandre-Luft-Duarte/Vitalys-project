@@ -5,7 +5,7 @@ import { Input } from "../components/ui/input.tsx";
 import { Label } from "../components/ui/label.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card.tsx";
 import { useToast } from "../hooks/use-toast.ts";
-import hospitalLogo from "@/assets/hospital-logo.png";
+import hospitalLogo from "@/assets/vitalys.png";
 
 const Login = () => {
     const [usuario, setUsuario] = useState("");
@@ -48,7 +48,7 @@ const Login = () => {
                         <img
                             src={hospitalLogo}
                             alt="Logo do Hospital"
-                            className="h-20 w-20 object-contain"
+                            className="h-20 w-40 object-contain"
                         />
                     </div>
                     <div>
