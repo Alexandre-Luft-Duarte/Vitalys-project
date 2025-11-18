@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import org.unoesc.backend.model.AnotacaoMedica;
 
 @Repository
-abstract public class AnotacaoMedicaRepository implements JpaRepository<AnotacaoMedica, Long> {
+public interface AnotacaoMedicaRepository extends JpaRepository<AnotacaoMedica, Long> {
 }
 

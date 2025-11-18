@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import org.unoesc.backend.model.Especialidade;
 
 @Repository
-abstract public class EspecialidadeRepository implements JpaRepository<Especialidade, Long> {
+public interface EspecialidadeRepository extends JpaRepository<Especialidade, Long> {
 }
 

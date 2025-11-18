@@ -1,23 +1,25 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {Navigate, useNavigate} from "react-router-dom";
 import { Button } from "../components/ui/button.tsx";
 import { Input } from "../components/ui/input.tsx";
 import { Label } from "../components/ui/label.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card.tsx";
 import { useToast } from "../hooks/use-toast.ts";
 import hospitalLogo from "@/assets/vitalys.png";
+import {useAuth} from "../contexts/AuthContext.tsx";
 
 const Login = () => {
-    const [usuario, setUsuario] = useState("");
+    const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const { toast } = useToast();
     const navigate = useNavigate();
+    const {login, isAuthenticated} = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!usuario || !senha) {
+        if (!email || !senha) {
             toast({
                 title: "Campos obrigatórios",
                 description: "Por favor, preencha usuário e senha.",
@@ -27,20 +29,38 @@ const Login = () => {
         }
 
         setIsLoading(true);
-
-        // Simular autenticação
-        setTimeout(() => {
+        try {
+            console.log("Enviando dados de login:", { email, senha });
+            const response = await login(email, senha);
             toast({
                 title: "Login realizado",
-                description: "Bem-vindo ao Sistema de Gestão Hospitalar!",
+                description: `Bem-vindo ao Vitalys, ${response.nome}!`,
             });
             setIsLoading(false);
-            // Navegar para o dashboard
             navigate("/dashboard");
-        }, 1500);
+        } catch (error) {
+            setIsLoading(false);
+            toast({
+                title: "Erro ao fazer login",
+                description: "Verifique suas credenciais e tente novamente.",
+                variant: "destructive",
+            });
+            return
+        }
+
+        // Simular autenticação
+        // setTimeout(() => {
+        //     toast({
+        //         title: "Login realizado",
+        //         description: "Bem-vindo ao Sistema de Gestão Hospitalar!",
+        //     });
+        //     setIsLoading(false);
+        //     // Navegar para o dashboard
+        //     navigate("/dashboard");
+        // }, 1500);
     };
 
-    return (
+    return !isAuthenticated ? (
         <div className="min-h-screen flex items-center justify-center bg-gradient-background p-4">
             <Card className="w-full max-w-md shadow-strong">
                 <CardHeader className="space-y-4 text-center pb-6">
@@ -65,14 +85,14 @@ const Login = () => {
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="usuario" className="text-foreground font-medium">
-                                Usuário / Matrícula
+                                Email
                             </Label>
                             <Input
-                                id="usuario"
+                                id="email"
                                 type="text"
                                 placeholder="Digite seu usuário ou matrícula"
-                                value={usuario}
-                                onChange={(e) => setUsuario(e.target.value)}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 className="h-11 bg-background border-border focus-visible:ring-primary"
                                 disabled={isLoading}
                             />
@@ -125,6 +145,8 @@ const Login = () => {
                 </CardContent>
             </Card>
         </div>
+    ) : (
+        <Navigate to="/dashboard" />
     );
 };
 

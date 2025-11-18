@@ -1,5 +1,7 @@
 package org.unoesc.backend.controller;
 
+import org.unoesc.backend.dto.AnotacaoRequestDTO;
+import org.unoesc.backend.dto.AtendimentoRequestDTO;
 import org.unoesc.backend.model.*; // Importa todas as suas entidades
 import org.unoesc.backend.repository.*; // Importa todos os seus repositórios
 import org.springframework.beans.factory.annotation.Autowired;

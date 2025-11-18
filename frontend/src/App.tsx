@@ -12,27 +12,33 @@ import AtendimentoClinico from "./pages/AtendimentoClinico.tsx";
 import CadastroPaciente from "./pages/CadastroPaciente.tsx";
 import CadastroUsuario from "./pages/CadastroUsuario.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import { AuthLayout } from "./layouts/AuthLayout.tsx";
+import {AuthContext} from "./contexts/AuthContext.tsx";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-    <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<Login />} />
-                    <Route path="/cadastro-usuario" element={<CadastroUsuario />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/dashboard-profissional" element={<DashboardProfissional />} />
-                    <Route path="/atendimento-clinico" element={<AtendimentoClinico />} />
-                    <Route path="/cadastro-paciente" element={<CadastroPaciente />} />
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
-            </BrowserRouter>
-        </TooltipProvider>
-    </QueryClientProvider>
+        <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                <AuthContext>
+                    <Routes>
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/cadastro-usuario" element={<CadastroUsuario />} />
+                        <Route path="*" element={<NotFound/>}/>
+                        <Route element={<AuthLayout />} >
+                            <Route path="/dashboard" element={<Dashboard />} />
+                            <Route path="/dashboard-profissional" element={<DashboardProfissional />} />
+                            <Route path="/atendimento-clinico" element={<AtendimentoClinico />} />
+                            <Route path="/cadastro-paciente" element={<CadastroPaciente />} />
+                        </Route>
+                    </Routes>
+                </AuthContext>
+                </BrowserRouter>
+            </TooltipProvider>
+        </QueryClientProvider>
 );
 
 export default App;

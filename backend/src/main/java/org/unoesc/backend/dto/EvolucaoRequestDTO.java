@@ -1,4 +1,4 @@
-package org.unoesc.backend.controller;
+package org.unoesc.backend.dto;
 
 // DTO para o JSON da nova evolução diária
 public record EvolucaoRequestDTO(

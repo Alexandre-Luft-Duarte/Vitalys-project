@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import org.unoesc.backend.model.Paciente;
 
 @Repository
-abstract public class PacienteRepository implements JpaRepository<Paciente, Long> {
+public interface PacienteRepository extends JpaRepository<Paciente, Long> {
 }
 

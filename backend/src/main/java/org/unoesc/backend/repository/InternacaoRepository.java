@@ -7,7 +7,7 @@ import org.unoesc.backend.model.StatusInternacao;
 import java.util.List;
 
 @Repository
-abstract public class InternacaoRepository implements JpaRepository<Internacao, Long> {
+public interface InternacaoRepository extends JpaRepository<Internacao, Long> {
     List<Internacao> findByStatus(StatusInternacao status);
 
     List<Internacao> findByPacienteIdPessoa(Long pacienteId);

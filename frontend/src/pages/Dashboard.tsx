@@ -3,6 +3,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { UserCircle, LogOut, UserPlus, Search } from "lucide-react";
 import { useState } from "react";
 import RegistrarAtendimentoModal from "@/components/RegistrarAtendimentoModal";
+import {useNavigate} from "react-router-dom";
+import HeaderNav from "@/components/HeaderNav.tsx";
 
 // Dados de exemplo para a fila de chegada
 const initialQueue = [
@@ -20,9 +22,10 @@ const Dashboard = () => {
     // Estados para o modal de atendimento
     const [modalOpen, setModalOpen] = useState(false);
     const [pacienteSelecionado, setPacienteSelecionado] = useState<{ id: number; nome: string } | null>(null);
+    const navigator = useNavigate();
 
     const handleNovoPaciente = () => {
-        window.location.href = "/cadastro-paciente";
+        navigator("/cadastro-paciente");
     };
 
     const handleBuscarPaciente = () => {
@@ -43,45 +46,8 @@ const Dashboard = () => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
             {/* Cabeçalho */}
-            <header className="bg-card border-b border-border shadow-sm">
-                <div className="container mx-auto px-6 py-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-8">
-                            <img
-                                src="/src/assets/vitalys2.png"
-                                alt="Hospital Logo"
-                                className="h-10 w-auto"
-                            />
-                            <nav className="flex gap-6">
-                                <button className="text-foreground font-medium hover:text-primary transition-colors">
-                                    Dashboard
-                                </button>
-                                <button className="text-muted-foreground hover:text-primary transition-colors">
-                                    Agendamentos
-                                </button>
-                                <button className="text-muted-foreground hover:text-primary transition-colors">
-                                    Relatórios
-                                </button>
-                            </nav>
-                        </div>
 
-                        <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2 text-sm">
-                                <UserCircle className="h-5 w-5 text-muted-foreground" />
-                                <span className="font-medium text-foreground">{userName}</span>
-                            </div>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={handleLogout}
-                                className="text-muted-foreground hover:text-destructive"
-                            >
-                                <LogOut className="h-4 w-4" />
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            </header>
+            <HeaderNav />
 
             {/* Conteúdo Principal */}
             <main className="container mx-auto px-6 py-8">

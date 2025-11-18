@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import org.unoesc.backend.model.EvolucaoInternacao;
 
 @Repository
-abstract public class EvolucaoInternacaoRepository implements JpaRepository<EvolucaoInternacao, Long> {
+public interface EvolucaoInternacaoRepository extends JpaRepository<EvolucaoInternacao, Long> {
 }

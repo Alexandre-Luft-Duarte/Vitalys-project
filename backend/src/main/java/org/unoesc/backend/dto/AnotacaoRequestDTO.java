@@ -1,4 +1,4 @@
-package org.unoesc.backend.controller;
+package org.unoesc.backend.dto;
 
 public record AnotacaoRequestDTO(
         String textoAnotacao,

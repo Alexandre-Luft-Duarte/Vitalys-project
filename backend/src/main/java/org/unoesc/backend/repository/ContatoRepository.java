@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import org.unoesc.backend.model.Contato;
 
 @Repository
-abstract public class ContatoRepository implements JpaRepository<Contato, Long> {
+public interface ContatoRepository extends JpaRepository<Contato, Long> {
 }

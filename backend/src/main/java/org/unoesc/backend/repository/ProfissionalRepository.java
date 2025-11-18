@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import org.unoesc.backend.model.Profissional;
 
 @Repository
-abstract public class ProfissionalRepository implements JpaRepository<Profissional, Long> {
+public interface ProfissionalRepository extends JpaRepository<Profissional, Long> {
 }

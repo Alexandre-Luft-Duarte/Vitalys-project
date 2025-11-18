@@ -1,4 +1,4 @@
-package org.unoesc.backend.controller;
+package org.unoesc.backend.dto;
 
 // Um "record" é uma forma moderna e simples de criar uma classe DTO.
 // Ele representa o JSON que o frontend vai enviar para criar um atendimento.

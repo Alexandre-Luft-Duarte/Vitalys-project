@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {Navigate, useNavigate} from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import hospitalLogo from "@/assets/vitalys.png";
+import {useAuth} from "../contexts/AuthContext.tsx";
 
 const CadastroUsuario = () => {
     const [nomeCompleto, setNomeCompleto] = useState("");
@@ -18,6 +19,7 @@ const CadastroUsuario = () => {
     const [isLoading, setIsLoading] = useState(false);
     const { toast } = useToast();
     const navigate = useNavigate();
+    const {isAuthenticated} = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -65,7 +67,7 @@ const CadastroUsuario = () => {
         }, 1500);
     };
 
-    return (
+    return !isAuthenticated ? (
         <div className="min-h-screen flex items-center justify-center bg-gradient-background p-4">
             <Card className="w-full max-w-md shadow-strong">
                 <CardHeader className="space-y-4 text-center pb-6">
@@ -203,6 +205,8 @@ const CadastroUsuario = () => {
                 </CardContent>
             </Card>
         </div>
+    ) : (
+        <Navigate to="/dashboard" />
     );
 };
 

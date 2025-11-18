@@ -6,8 +6,7 @@ import org.unoesc.backend.model.*;
 import java.util.List;
 
 @Repository
-public abstract class AtendimentoRepository implements JpaRepository<Atendimento, Long> {
-
+public interface AtendimentoRepository extends JpaRepository<Atendimento, Long> {
     List<Atendimento> findByStatus(StatusAtendimento status);
 
     List<Atendimento> findByPacienteIdPessoa(Long pacienteId);

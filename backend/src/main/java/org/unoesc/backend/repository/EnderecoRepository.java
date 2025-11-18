@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import org.unoesc.backend.model.Endereco;
 
 @Repository
-abstract public class EnderecoRepository implements JpaRepository<Endereco, Long> {
+public interface EnderecoRepository extends JpaRepository<Endereco, Long> {
 }
 
