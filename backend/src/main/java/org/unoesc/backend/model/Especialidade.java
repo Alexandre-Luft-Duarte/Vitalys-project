@@ -11,11 +11,11 @@ public class Especialidade {
     private Long idEspecialidade;
 
     @Column(nullable = false)
-    private String especialidade;
+    private String nome;
 
-    public Especialidade(Long idEspecialidade, String especialidade) {
+    public Especialidade(Long idEspecialidade, String nome) {
         this.idEspecialidade = idEspecialidade;
-        this.especialidade = especialidade;
+        this.nome = nome;
     }
 
     public Especialidade() {}
@@ -28,11 +28,11 @@ public class Especialidade {
         this.idEspecialidade = idEspecialidade;
     }
 
-    public String getEspecialidade() {
-        return especialidade;
+    public String getNome() {
+        return nome;
     }
 
-    public void setEspecialidade(String especialidade) {
-        this.especialidade = especialidade;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 }
