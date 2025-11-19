@@ -1,5 +1,6 @@
 package org.unoesc.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.unoesc.backend.model.*;
 
@@ -10,17 +11,17 @@ public class Endereco {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idEndereco;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String cidade;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String estado;
 
     @Column(nullable = false)
     private String logradouro;
 
     @Column(nullable = true)
-    private Integer numero;
+    private String numero;
 
     @Column(nullable = true)
     private String bairro;
@@ -28,11 +29,12 @@ public class Endereco {
     @Column(nullable = true)
     private String cep;
 
+    @JsonIgnore
     @JoinColumn(name = "id_pessoa")
     @ManyToOne
     private Pessoa pessoa;
 
-    public Endereco(Long idEndereco, String cidade, String estado, String logradouro, Integer numero, String bairro, String cep) {
+    public Endereco(Long idEndereco, String cidade, String estado, String logradouro, String numero, String bairro, String cep) {
         this.idEndereco = idEndereco;
         this.cidade = cidade;
         this.estado = estado;
@@ -43,6 +45,14 @@ public class Endereco {
     }
 
     public Endereco() {
+    }
+
+    public Pessoa getPessoa() {
+        return pessoa;
+    }
+
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
     }
 
     public Long getIdEndereco() {
@@ -77,11 +87,11 @@ public class Endereco {
         this.logradouro = logradouro;
     }
 
-    public Integer getNumero() {
+    public String getNumero() {
         return numero;
     }
 
-    public void setNumero(Integer numero) {
+    public void setNumero(String numero) {
         this.numero = numero;
     }
 

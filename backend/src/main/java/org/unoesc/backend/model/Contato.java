@@ -1,5 +1,6 @@
 package org.unoesc.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.unoesc.backend.model.*;
 
@@ -13,6 +14,7 @@ public class Contato {
     @Column(nullable = false)
     private String telefone;
 
+    @JsonIgnore
     @JoinColumn(name = "id_pessoa")
     @ManyToOne
     private Pessoa pessoa;
@@ -40,4 +42,8 @@ public class Contato {
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
+
+    public Pessoa getPessoa() {return pessoa;}
+
+    public void setPessoa(Pessoa pessoa) {this.pessoa = pessoa;}
 }

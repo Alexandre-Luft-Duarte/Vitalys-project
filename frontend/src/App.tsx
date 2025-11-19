@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "./components/ui/sonner.tsx";
 import { TooltipProvider } from "./components/ui/tooltip.tsx";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 
 import Login from "./pages/Login.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
@@ -33,6 +33,7 @@ const App = () => (
                             <Route path="/dashboard-profissional" element={<DashboardProfissional />} />
                             <Route path="/atendimento-clinico" element={<AtendimentoClinico />} />
                             <Route path="/cadastro-paciente" element={<CadastroPaciente />} />
+                            <Route path="/" element={<Navigate to={"/dashboard"} />} />
                         </Route>
                     </Routes>
                 </AuthContext>
