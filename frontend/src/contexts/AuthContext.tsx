@@ -29,6 +29,7 @@ export function AuthContext({ children } : { children: React.ReactNode }) {
         const data = await response.json();
         window.localStorage.setItem("nome", data.nome);
         window.localStorage.setItem("token", data.token);
+        window.localStorage.setItem("tipoUsuario", data.tipoUsuario);
         setIsAuthenticated(true);
         return data;
     }

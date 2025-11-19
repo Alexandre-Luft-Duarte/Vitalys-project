@@ -1,9 +1,14 @@
-import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { UserCircle, LogOut, UserPlus, Search } from "lucide-react";
-import { useState } from "react";
+import {LogOut, UserPlus, Search, ArrowLeft, UserCircle} from "lucide-react";
 import RegistrarAtendimentoModal from "@/components/RegistrarAtendimentoModal";
-import {useNavigate} from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import {  } from "lucide-react";
+import {useEffect, useState} from "react";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast.ts";
+import { PacienteListagemType } from "@/lib/Types.tsx";
+
 
 // Dados de exemplo para a fila de chegada
 const initialQueue = [
@@ -14,10 +19,13 @@ const initialQueue = [
     { id: 5, nome: "Fernanda Rodrigues", horaChegada: "09:18", departamento: "Ortopedia" },
 ];
 
-const Dashboard = () => {
-    const [queue] = useState(initialQueue);
+// onClick={() => handleSelecionarPaciente(patient.id, patient.nome)
 
-    // Estados para o modal de atendimento
+const Dashboard = () => {
+    const { toast } = useToast();
+    const [busca, setBusca] = useState("");
+    const [pacientes, setPacientes] = useState<Array<PacienteListagemType>>([])
+    const [resultados, setResultados] = useState(pacientes);
     const [modalOpen, setModalOpen] = useState(false);
     const [pacienteSelecionado, setPacienteSelecionado] = useState<{ id: number; nome: string } | null>(null);
     const navigator = useNavigate();
@@ -26,20 +34,47 @@ const Dashboard = () => {
         navigator("/cadastro-paciente");
     };
 
-    const handleBuscarPaciente = () => {
-        navigator("/buscar-paciente");
-        // TODO: Abrir modal de busca
-    };
-
-    const handleLogout = () => {
-        // TODO: Implementar logout
-        console.log("Logout");
-    };
-
     const handleSelecionarPaciente = (id: number, nome: string) => {
         setPacienteSelecionado({ id, nome });
         setModalOpen(true);
     };
+
+    async function buscarPacientes() {
+        const response = await fetch("http://localhost:8080/api/pacientes");
+        if (!response.ok) {
+            toast({
+                title: "Erro ao buscar pacientes.",
+                description: "Verifique suas conexão e tente novamente.",
+                variant: "destructive",
+            });
+        }
+        const pacientes = await response.json();
+        console.log("Pacientes buscados:", pacientes);
+        setPacientes(pacientes);
+        setResultados(pacientes);
+    }
+
+    const handleBusca = (valor: string) => {
+        setBusca(valor);
+
+        if (valor.trim() === "") {
+            setResultados(pacientes);
+            return;
+        }
+
+        const valorBusca = valor.toLowerCase();
+        const filtrados = pacientes.filter(
+            (paciente: any) =>
+                paciente.nome.toLowerCase().includes(valorBusca) ||
+                paciente.cpf.includes(valorBusca) ||
+                paciente.matricula.toLowerCase().includes(valorBusca)
+        );
+        setResultados(filtrados);
+    };
+
+    useEffect(() => {
+        buscarPacientes();
+    }, [])
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
@@ -58,71 +93,83 @@ const Dashboard = () => {
                             <UserPlus className="h-6 w-6 mr-3" />
                             Cadastrar Novo Paciente
                         </Button>
-
-                        <Button
-                            size="lg"
-                            variant="outline"
-                            onClick={handleBuscarPaciente}
-                            className="h-20 text-lg font-semibold border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all shadow-md"
-                        >
-                            <Search className="h-6 w-6 mr-3" />
-                            Buscar Paciente Existente
-                        </Button>
                     </div>
                 </section>
 
-                {/* Fila de Chegada */}
-                <section>
-                    <div className="bg-card rounded-lg border border-border shadow-md overflow-hidden">
-                        <div className="bg-gradient-to-r from-primary to-accent px-6 py-4">
-                            <h2 className="text-xl font-bold text-primary-foreground">
-                                Fila de Chegada
-                            </h2>
-                            <p className="text-sm text-primary-foreground/80 mt-1">
-                                Pacientes aguardando atendimento
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold text-foreground mb-2">
+                        Buscar Paciente Existente
+                    </h1>
+                    <p className="text-muted-foreground">
+                        Pesquise por nome, CPF ou número de matrícula
+                    </p>
+                </div>
+
+                {/* Campo de Busca */}
+                <Card className="p-6 mb-6 shadow-md">
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        <Input
+                            type="text"
+                            placeholder="Digite o nome, CPF ou matrícula do paciente..."
+                            value={busca}
+                            onChange={(e) => handleBusca(e.target.value)}
+                            className="pl-10 h-12 text-base"
+                        />
+                    </div>
+                </Card>
+
+                {/* Resultados da Busca */}
+                <div className="space-y-4">
+                    <h2 className="text-lg font-semibold text-foreground">
+                        {resultados.length} {resultados.length === 1 ? "resultado encontrado" : "resultados encontrados"}
+                    </h2>
+
+                    {resultados.length === 0 ? (
+                        <Card className="p-8 text-center">
+                            <p className="text-muted-foreground">
+                                Nenhum paciente encontrado. Tente outra busca.
                             </p>
-                        </div>
-
-                        <div className="p-6">
-                            {queue.length === 0 ? (
-                                <div className="text-center py-12 text-muted-foreground">
-                                    <p className="text-lg">Nenhum paciente na fila no momento</p>
+                        </Card>
+                    ) : (
+                        resultados.map((paciente) => (
+                            <Card
+                                key={paciente.id}
+                                className="p-6 hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-primary"
+                                onClick={() => handleSelecionarPaciente(paciente.id, paciente.nome)}
+                            >
+                                <div className="flex items-start justify-between">
+                                    <div className="flex items-start gap-4">
+                                        <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                                            <UserCircle className="h-7 w-7 text-primary" />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <h3 className="text-lg font-semibold text-foreground">
+                                                {paciente.nome}
+                                            </h3>
+                                            <div className="flex gap-4 text-sm text-muted-foreground">
+                                                <span>CPF: {paciente.cpf}</span>
+                                                <span>•</span>
+                                                <span>Matrícula: {paciente.matricula}</span>
+                                                <span>•</span>
+                                                <span>Nascimento: {paciente.dataNascimento}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <Button
+                                        variant="outline"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleSelecionarPaciente(paciente.id, paciente.nome);
+                                        }}
+                                    >
+                                        Selecionar
+                                    </Button>
                                 </div>
-                            ) : (
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow className="border-b border-border">
-                                            <TableHead className="font-semibold text-foreground">Nome do Paciente</TableHead>
-                                            <TableHead className="font-semibold text-foreground">Hora da Chegada</TableHead>
-                                            <TableHead className="font-semibold text-foreground">Departamento</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {queue.map((patient) => (
-                                            <TableRow
-                                                key={patient.id}
-                                                onClick={() => handleSelecionarPaciente(patient.id, patient.nome)}
-                                                className="border-b border-border hover:bg-muted/50 transition-colors cursor-pointer"
-                                            >
-                                                <TableCell className="font-medium text-foreground">
-                                                    {patient.nome}
-                                                </TableCell>
-                                                <TableCell className="text-muted-foreground">
-                                                    {patient.horaChegada}
-                                                </TableCell>
-                                                <TableCell>
-                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-accent/10 text-accent border border-accent/20">
-                            {patient.departamento}
-                          </span>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            )}
-                        </div>
-                    </div>
-                </section>
+                            </Card>
+                        ))
+                    )}
+                </div>
             </main>
 
             {/* Modal de Registrar Atendimento */}

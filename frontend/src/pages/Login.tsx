@@ -36,8 +36,15 @@ const Login = () => {
                 title: "Login realizado",
                 description: `Bem-vindo ao Vitalys, ${response.nome}!`,
             });
+
             setIsLoading(false);
-            navigate("/dashboard");
+
+            if (response.tipoUsuario === "RECEPCIONISTA") {
+                navigate("/dashboard");
+            } else {
+                navigate("/dashboard-profissional");
+            }
+
         } catch (error) {
             setIsLoading(false);
             toast({
