@@ -12,6 +12,7 @@ import AtendimentoClinico from "./pages/AtendimentoClinico.tsx";
 import CadastroPaciente from "./pages/CadastroPaciente.tsx";
 import CadastroUsuario from "./pages/CadastroUsuario.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import PacientesInternados from "./pages/PacientesInternados.tsx";
 import { AuthLayout } from "./layouts/AuthLayout.tsx";
 import {AuthContext} from "./contexts/AuthContext.tsx";
 import BuscarPaciente from "./pages/BuscarPaciente.tsx";
@@ -30,12 +31,13 @@ const App = () => (
                         <Route path={"/cadastro-usuario"} element={<CadastroUsuario />} />
                         <Route path={"*"} element={<NotFound/>}/>
                         <Route element={<AuthLayout />} >
-                            <Route path={"/dashboard"} element={<Dashboard />} />
-                            <Route path={"/dashboard-profissional"} element={<DashboardProfissional />} />
-                            <Route path={"/atendimento-clinico"} element={<AtendimentoClinico />} />
-                            <Route path={"/cadastro-paciente"} element={<CadastroPaciente />} />
                             <Route path={"/buscar-paciente"} element={<BuscarPaciente />} />
-                            <Route path={"/"} element={<Navigate to={"/dashboard"} />} />
+                            <Route path="/dashboard" element={<Dashboard />} />
+                            <Route path="/dashboard-profissional" element={<DashboardProfissional />} />
+                            <Route path="/atendimento-clinico" element={<AtendimentoClinico />} />
+                            <Route path="/cadastro-paciente" element={<CadastroPaciente />} />
+                            <Route path="/pacientes-internados" element={<PacientesInternados />} />
+                            <Route path="/" element={<Navigate to={"/dashboard"} />} />
                         </Route>
                     </Routes>
                 </AuthContext>

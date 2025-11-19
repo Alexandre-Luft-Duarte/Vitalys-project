@@ -4,7 +4,6 @@ import { UserCircle, LogOut, UserPlus, Search } from "lucide-react";
 import { useState } from "react";
 import RegistrarAtendimentoModal from "@/components/RegistrarAtendimentoModal";
 import {useNavigate} from "react-router-dom";
-import HeaderNav from "@/components/HeaderNav.tsx";
 
 // Dados de exemplo para a fila de chegada
 const initialQueue = [
@@ -29,6 +28,7 @@ const Dashboard = () => {
 
     const handleBuscarPaciente = () => {
         navigator("/buscar-paciente");
+        // TODO: Abrir modal de busca
     };
 
     const handleLogout = () => {
