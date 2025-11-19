@@ -37,3 +37,10 @@ export type CadastroPacienteType = {
     telefone?: string;
     endereco?: EnderecoData | null; // Pode ser null se não preenchido
 }
+
+export type PacienteListagemType = {
+    id: number,
+    nome: string,
+    cpf: string,
+    dataNascimento: string
+}

@@ -168,7 +168,6 @@ const CadastroPaciente = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
-            <HeaderNav />
 
             <div className="container mx-auto px-6 max-w-4xl py-8">
                 {/* Cabeçalho */}

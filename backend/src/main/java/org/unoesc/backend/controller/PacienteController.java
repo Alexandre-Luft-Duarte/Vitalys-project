@@ -14,6 +14,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.unoesc.backend.dto.PacienteListagemDTO;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/pacientes")
@@ -87,12 +89,17 @@ public class PacienteController {
         }
     }
 
-    // Endpoint para LER TODOS (GET)
     @GetMapping
-    public ResponseEntity<List<Paciente>> listarPacientes() {
-        // A lógica de buscar fica aqui
+    public ResponseEntity<List<PacienteListagemDTO>> listarPacientes() {
+        // 1. Busca as entidades no banco
         List<Paciente> pacientes = pacienteRepository.findAll();
-        return ResponseEntity.ok(pacientes);
+
+        // 2. Converte a lista de Entidades para a lista de DTOs
+        List<PacienteListagemDTO> listaFormatada = pacientes.stream()
+                .map(PacienteListagemDTO::new) // Chama aquele construtor auxiliar que criamos
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(listaFormatada);
     }
 
     // Endpoint para LER UM por ID (GET)

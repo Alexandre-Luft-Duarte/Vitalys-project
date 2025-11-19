@@ -2,34 +2,55 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Search, ArrowLeft, UserCircle } from "lucide-react";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast.ts";
+import { PacienteListagemType } from "@/lib/Types.tsx";
 
 // Dados de exemplo - pacientes cadastrados
-const pacientesCadastrados = [
-    { id: 1, nome: "Maria Silva Santos", cpf: "123.456.789-00", matricula: "P001", dataNascimento: "15/03/1985" },
-    { id: 2, nome: "João Pedro Oliveira", cpf: "234.567.890-11", matricula: "P002", dataNascimento: "22/07/1992" },
-    { id: 3, nome: "Ana Paula Costa", cpf: "345.678.901-22", matricula: "P003", dataNascimento: "10/12/1978" },
-    { id: 4, nome: "Carlos Eduardo Mendes", cpf: "456.789.012-33", matricula: "P004", dataNascimento: "05/09/1988" },
-    { id: 5, nome: "Fernanda Rodrigues", cpf: "567.890.123-44", matricula: "P005", dataNascimento: "18/04/1995" },
-];
+// const pacientesCadastrados = [
+//     { id: 1, nome: "Maria Silva Santos", cpf: "123.456.789-00", matricula: "P001", dataNascimento: "15/03/1985" },
+//     { id: 2, nome: "João Pedro Oliveira", cpf: "234.567.890-11", matricula: "P002", dataNascimento: "22/07/1992" },
+//     { id: 3, nome: "Ana Paula Costa", cpf: "345.678.901-22", matricula: "P003", dataNascimento: "10/12/1978" },
+//     { id: 4, nome: "Carlos Eduardo Mendes", cpf: "456.789.012-33", matricula: "P004", dataNascimento: "05/09/1988" },
+//     { id: 5, nome: "Fernanda Rodrigues", cpf: "567.890.123-44", matricula: "P005", dataNascimento: "18/04/1995" },
+// ];
 
 const BuscarPaciente = () => {
+    const { toast } = useToast();
     const navigate = useNavigate();
     const [busca, setBusca] = useState("");
-    const [resultados, setResultados] = useState(pacientesCadastrados);
+    const [pacientes, setPacientes] = useState<Array<PacienteListagemType>>([])
+    const [resultados, setResultados] = useState(pacientes);
+
+    console.log(resultados)
+
+    async function buscarPacientes() {
+        const response = await fetch("http://localhost:8080/api/pacientes");
+        if (!response.ok) {
+            toast({
+                title: "Erro ao buscar pacientes.",
+                description: "Verifique suas conexão e tente novamente.",
+                variant: "destructive",
+            });
+        }
+        const pacientes = await response.json();
+        console.log("Pacientes buscados:", pacientes);
+        setPacientes(pacientes);
+        setResultados(pacientes);
+    }
 
     const handleBusca = (valor: string) => {
         setBusca(valor);
 
         if (valor.trim() === "") {
-            setResultados(pacientesCadastrados);
+            setResultados(pacientes);
             return;
         }
 
         const valorBusca = valor.toLowerCase();
-        const filtrados = pacientesCadastrados.filter(
-            (paciente) =>
+        const filtrados = pacientes.filter(
+            (paciente: any) =>
                 paciente.nome.toLowerCase().includes(valorBusca) ||
                 paciente.cpf.includes(valorBusca) ||
                 paciente.matricula.toLowerCase().includes(valorBusca)
@@ -37,37 +58,32 @@ const BuscarPaciente = () => {
         setResultados(filtrados);
     };
 
-    const handleSelecionarPaciente = (paciente: typeof pacientesCadastrados[0]) => {
+    const handleSelecionarPaciente = (paciente: typeof pacientes[0]) => {
         // Redirecionar para cadastro de paciente com os dados preenchidos
         navigate("/cadastro-paciente", { state: { paciente } });
     };
 
+    useEffect(() => {
+        buscarPacientes();
+    }, [])
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
             {/* Cabeçalho */}
-            <header className="bg-card border-b border-border shadow-sm">
-                <div className="container mx-auto px-6 py-4">
-                    <div className="flex items-center gap-4">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => navigate("/dashboard")}
-                            className="text-muted-foreground hover:text-foreground"
-                        >
-                            <ArrowLeft className="h-4 w-4 mr-2" />
-                            Voltar ao Dashboard
-                        </Button>
-                        <img
-                            src="/src/assets/hospital-logo.png"
-                            alt="Hospital Logo"
-                            className="h-10 w-auto ml-4"
-                        />
-                    </div>
-                </div>
-            </header>
 
             {/* Conteúdo Principal */}
             <main className="container mx-auto px-6 py-8 max-w-5xl">
+
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => navigate("/dashboard")}
+                    className="text-muted-foreground hover:text-foreground py-4 py+4"
+                >
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Voltar ao Dashboard
+                </Button>
+
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-foreground mb-2">
                         Buscar Paciente Existente

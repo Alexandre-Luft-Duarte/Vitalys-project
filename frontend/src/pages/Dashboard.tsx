@@ -17,7 +17,6 @@ const initialQueue = [
 
 const Dashboard = () => {
     const [queue] = useState(initialQueue);
-    const userName = "Recepcionista"; // Pode ser dinâmico no futuro
 
     // Estados para o modal de atendimento
     const [modalOpen, setModalOpen] = useState(false);
@@ -29,8 +28,7 @@ const Dashboard = () => {
     };
 
     const handleBuscarPaciente = () => {
-        // TODO: Abrir modal de busca
-        console.log("Buscar paciente existente");
+        navigator("/buscar-paciente");
     };
 
     const handleLogout = () => {
@@ -46,8 +44,6 @@ const Dashboard = () => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
             {/* Cabeçalho */}
-
-            <HeaderNav />
 
             {/* Conteúdo Principal */}
             <main className="container mx-auto px-6 py-8">
