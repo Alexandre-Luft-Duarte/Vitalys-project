@@ -1,13 +1,19 @@
 -- Departamentos
-INSERT INTO departamento (id_departamento, nome) VALUES
-                                                     (1, 'Recepção Central'),
-                                                     (2, 'Clínica Médica'),
-                                                     (3, 'Pediatria'),
-                                                     (4, 'Ortopedia'),
-                                                     (5, 'Cardiologia');
+INSERT INTO departamento (nome) VALUES
+                                    ('Recepção Central'), -- ID 1 (Mantive para o uso do Recepcionista)
+                                    ('Clínica Geral'),    -- ID 2
+                                    ('Cardiologia'),      -- ID 3
+                                    ('Ortopedia'),        -- ID 4
+                                    ('Pediatria'),        -- ID 5
+                                    ('Neurologia'),       -- ID 6
+                                    ('Dermatologia'),     -- ID 7
+                                    ('Oftalmologia'),     -- ID 8
+                                    ('Ginecologia'),      -- ID 9
+                                    ('Urgência'),         -- ID 10
+                                    ('Triagem');          -- ID 11
 
 -- Especialidades
-INSERT INTO especialidade (id_especialidade, especialidade) VALUES (1, 'Clínico Geral'),
+INSERT INTO especialidade (id_especialidade, nome) VALUES (1, 'Clínico Geral'),
                                                                    (2, 'Pediatra'),
                                                                    (3, 'Ortopedista'),
                                                                    (4, 'Cardiologista'),
@@ -64,7 +70,7 @@ INSERT INTO recepcionista (id_pessoa) VALUES
                                           (2);
 
 -- Tabela Profissional (IDs 3, 4 e 5) - Vinculando especialidades
-INSERT INTO profissional (id_pessoa, id_especialidade) VALUES
+INSERT INTO profissional (id_pessoa, id_departamento) VALUES
                                                            (3, 1), -- House: Clínico Geral
                                                            (4, 2), -- Grey: Pediatra
                                                            (5, 4); -- Shaun: Cardiologista
