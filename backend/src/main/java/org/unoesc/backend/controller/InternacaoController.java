@@ -99,8 +99,6 @@ public class InternacaoController {
      */
     @GetMapping("/ativas")
     public ResponseEntity<List<Internacao>> listarInternacoesAtivas() {
-        // **AÇÃO NECESSÁRIA:** Adicione este método na sua interface InternacaoRepository:
-        // List<Internacao> findByStatus(StatusInternacao status);
         List<Internacao> internacoes = internacaoRepository.findByStatus(StatusInternacao.ATIVA);
         return ResponseEntity.ok(internacoes);
     }

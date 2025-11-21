@@ -53,6 +53,8 @@ export function AuthContext({ children } : { children: React.ReactNode }) {
     async function logout() {
         setIsAuthenticated(false);
         window.localStorage.removeItem("token");
+        window.localStorage.removeItem("nome");
+        window.localStorage.removeItem("tipoUsuario");
     }
 
     useEffect(() => {

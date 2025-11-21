@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { DEPARTAMENTOS } from "@/lib/constants.ts";
 import {
     Select,
     SelectContent,
@@ -46,6 +45,7 @@ const RegistrarAtendimentoModal = ({
                                    }: RegistrarAtendimentoModalProps) => {
     const { toast } = useToast();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [departamentos, setDepartamentos] = useState<string[]>([]);
 
     const {
         register,
@@ -57,32 +57,88 @@ const RegistrarAtendimentoModal = ({
         resolver: zodResolver(atendimentoSchema),
     });
 
+
+
     const onSubmit = async (data: AtendimentoFormData) => {
         setIsSubmitting(true);
+        const idDepartamento = departamentos?.find((dept: any) => dept.nome = data.departamento)?.idDepartamento;
+
+
+        const payload = {
+            pacienteId,
+            departamentoId: idDepartamento,
+            motivo: data.motivoVisita
+        }
+
+        console.log("Payload:", payload);
+
+        const response = await fetch("http://localhost:8080/api/atendimentos", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        })
+
+        if (!response.ok) {
+            toast({
+                title: "Erro ao registrar atendimento",
+                description: "Ocorreu um erro ao registrar o atendimento. Por favor, tente novamente.",
+                variant: "destructive",
+            });
+            setIsSubmitting(false);
+            return;
+        }
+
+        toast({
+            title: "Atendimento registrado com sucesso!",
+            description: `${pacienteNome} foi encaminhado para ${data.departamento}.`,
+        });
+        setIsSubmitting(false);
+        reset();
+        onOpenChange(false);
 
         // Simular registro de atendimento
-        setTimeout(() => {
-            console.log("Atendimento registrado:", {
-                pacienteId,
-                pacienteNome,
-                ...data,
-            });
-
-            toast({
-                title: "Atendimento registrado!",
-                description: `${pacienteNome} foi encaminhado para ${data.departamento}.`,
-            });
-
-            setIsSubmitting(false);
-            reset();
-            onOpenChange(false);
-        }, 1000);
+        // setTimeout(() => {
+        //     console.log("Atendimento registrado:", {
+        //         pacienteId,
+        //         pacienteNome,
+        //         ...data,
+        //     });
+        //
+        //     toast({
+        //         title: "Atendimento registrado!",
+        //         description: `${pacienteNome} foi encaminhado para ${data.departamento}.`,
+        //     });
+        //
+        //     setIsSubmitting(false);
+        //     reset();
+        //     onOpenChange(false);
+        // }, 1000);
     };
 
     const handleCancel = () => {
         reset();
         onOpenChange(false);
     };
+
+    const fetchDepartamentos = async () => {
+        const response = await fetch("http://localhost:8080/api/departamentos");
+        if (!response.ok) {
+            toast({
+                title: "Aviso",
+                description: "Não foi possível buscar departamentos, verifique sua conexão e tente novamente.",
+                variant: "destructive",
+            });
+        }
+        const data = await response.json();
+        console.log("Departamentos:", data);
+        setDepartamentos(data);
+    };
+
+    useEffect(() => {
+        fetchDepartamentos();
+    }, [])
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -145,9 +201,9 @@ const RegistrarAtendimentoModal = ({
                                 <SelectValue placeholder="Selecione o departamento" />
                             </SelectTrigger>
                             <SelectContent className="z-[100]">
-                                {DEPARTAMENTOS.map((dept) => (
-                                    <SelectItem key={dept} value={dept}>
-                                        {dept}
+                                {departamentos.map((dept: any, index) => (
+                                    <SelectItem key={`${dept.nome}${dept.idDepartamento}${index}`} value={dept.nome}>
+                                        {dept.nome}
                                     </SelectItem>
                                 ))}
                             </SelectContent>

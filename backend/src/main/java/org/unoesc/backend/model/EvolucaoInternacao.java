@@ -1,5 +1,6 @@
 package org.unoesc.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ public class EvolucaoInternacao {
     @Column(nullable = false)
     private LocalDateTime dataHora;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_internacao", nullable = false)
     private Internacao internacao;
