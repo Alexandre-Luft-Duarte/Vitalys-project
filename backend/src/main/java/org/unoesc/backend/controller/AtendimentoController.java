@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping; // Importa todas as suas entidades
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping; // Importa todas as suas entidades
 import org.springframework.web.bind.annotation.RequestBody; // Importa todos os seus repositórios
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -98,15 +100,26 @@ public class AtendimentoController {
     //  *  Iniciar Atendimento 
     //  * Muda o status de "AGUARDANDO" para "EM_ATENDIMENTO".
     //  */
-    // @PutMapping("/{id}/iniciar")
-    // public ResponseEntity<Atendimento> iniciarAtendimento(@PathVariable Long id) {
-    //     Atendimento atendimento = atendimentoRepository.findById(id)
-    //             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Atendimento não encontrado"));
+    @PutMapping("/{id}/iniciar")
+    public ResponseEntity<Atendimento> iniciarAtendimento(@PathVariable Long id) {
+        Atendimento atendimento = atendimentoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Atendimento não encontrado"));
 
-    //     atendimento.setStatus(StatusAtendimento.EM_ATENDIMENTO); // Muda o status [cite: 126]
-    //     Atendimento atendimentoAtualizado = atendimentoRepository.save(atendimento);
-    //     return ResponseEntity.ok(atendimentoAtualizado);
-    // }
+        atendimento.setStatus(StatusAtendimento.EM_ATENDIMENTO); // Muda o status [cite: 126]
+        Atendimento atendimentoAtualizado = atendimentoRepository.save(atendimento);
+        return ResponseEntity.ok(atendimentoAtualizado);
+    }
+
+    /**
+     * Buscar Atendimento por ID
+     * Necessário para o frontend descobrir qual é o Paciente vinculado a este atendimento.
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Atendimento> buscarAtendimento(@PathVariable Long id) {
+        return atendimentoRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 
     /**
      * Finalizar Atendimento 

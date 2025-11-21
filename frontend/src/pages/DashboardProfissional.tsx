@@ -82,59 +82,38 @@ const DashboardProfissional = () => {
         return "Aguardando";
     };
 
-    // const handleChamarPaciente = async (id: number) => {
-    //     try {
-    //         // Chama o endpoint que muda o status para EM_ATENDIMENTO
-    //         const response = await fetch(`http://localhost:8080/api/atendimentos/${id}/iniciar`, {
-    //             method: "PUT"
-    //         });
+    const handleChamarPaciente = async (id: number) => {
+        try {
+            // Chama o endpoint que muda o status para EM_ATENDIMENTO
+            const response = await fetch(`http://localhost:8080/api/paciente/${id}/inicar`, {
+                method: "PUT"
+            });
 
-    //         if (!response.ok) throw new Error("Erro ao iniciar atendimento");
+            if (!response.ok) throw new Error("Erro ao iniciar atendimento");
 
-    //         toast({
-    //             title: "Atendimento Iniciado",
-    //             description: "Direcionando para o prontuário...",
-    //         });
+            toast({
+                title: "Atendimento Iniciado",
+                description: "Direcionando para o prontuário...",
+            });
 
-    //         // Atualiza a lista localmente para feedback visual imediato
-    //         setPacientes((prev) =>
-    //             prev.map((p) => p.id === id ? { ...p, status: "Em Atendimento" } : p)
-    //         );
+            // Atualiza a lista localmente para feedback visual imediato
+            setPacientes((prev) =>
+                prev.map((p) => p.id === id ? { ...p, status: "Em Atendimento" } : p)
+            );
 
-    //         // Navega passando o ID real do atendimento
-    //         setTimeout(() => {
-    //             navigate(`/atendimento-clinico/${id}`); // <--- IMPORTANTE: Passar o ID na URL
-    //         }, 1000);
+            // Navega passando o ID real do atendimento
+            setTimeout(() => {
+                navigate(`/atendimento-clinico/${id}`); // <--- IMPORTANTE: Passar o ID na URL
+            }, 1000);
 
-    //     } catch (error) {
-    //         toast({
-    //             title: "Erro",
-    //             description: "Não foi possível iniciar o atendimento.",
-    //             variant: "destructive",
-    //         });
-    //     }
-    // };
-
-    // const handleChamarPaciente = (id: number) => {
-    //     setPacientes((prev) =>
-    //         prev.map((p) =>
-    //             p.id === id ? { ...p, status: "Em Atendimento" as const } : p
-    //         )
-    //     );
-
-    //     const paciente = pacientes.find((p) => p.id === id);
-    //     if (paciente) {
-    //         toast({
-    //             title: "Paciente chamado",
-    //             description: `${paciente.nome} está sendo direcionado ao consultório.`,
-    //         });
-
-    //         // Navegar para a tela de atendimento clínico
-    //         setTimeout(() => {
-    //             navigate("/atendimento-clinico");
-    //         }, 1000);
-    //     }
-    // };
+        } catch (error) {
+            toast({
+                title: "Erro",
+                description: "Não foi possível iniciar o atendimento.",
+                variant: "destructive",
+            });
+        }
+    };
 
     const handleLogout = () => {
         console.log("Logout");
@@ -212,7 +191,7 @@ const DashboardProfissional = () => {
             {/*            </div>*/}
             {/*        </div>*/}
             {/*    </div>*/}
-            {/*</header>*/}
+            {/*</header> */}
 
 
 
@@ -286,11 +265,11 @@ const DashboardProfissional = () => {
                                             <TableCell className="text-muted-foreground">{paciente.motivoVisita}</TableCell>
                                             <TableCell>{getStatusBadge(paciente.status)}</TableCell>
                                             <TableCell className="text-center">
-                                                {/* {paciente.status === "Aguardando" ? (
+                                                {paciente.status === "Aguardando" ? (
                                                     <Button size="sm" onClick={() => handleChamarPaciente(paciente.id)} className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity font-semibold shadow-sm">
                                                         Chamar
                                                     </Button>
-                                                ) : null} */}
+                                                ) : null}
                                                 {paciente.status === "Em Atendimento" ? (
                                                     <span className="text-xs text-muted-foreground italic">Atendendo</span>
                                                 ) : null}

@@ -23,71 +23,27 @@ import { useToast } from "../hooks/use-toast.ts";
 import SolicitarInternacaoModal from "../components/SolicitarInternacaoModal.tsx";
 import RegistrarAltaMedicaModal from "../components/RegistrarAltaMedica.tsx";
 
-const pacienteAtual = {
-    id: 1,
-    nome: "Maria Silva Santos",
-    idade: 45,
-    cpf: "123.456.789-00",
-    dataNascimento: "15/03/1979",
-    alergias: ["Penicilina", "Dipirona"],
-    motivoVisita: "Dor no peito",
-};
-
-const historicoClinico = [
-    {
-        id: 1,
-        tipo: "Consulta",
-        data: "15/02/2025",
-        profissional: "Dr. Roberto Almeida",
-        departamento: "Cardiologia",
-        resumo: "Paciente relatou episódios de taquicardia. ECG normal. Prescrito betabloqueador.",
-        diagnostico: "Taquicardia sinusal",
-    },
-    {
-        id: 2,
-        tipo: "Exame",
-        data: "10/01/2025",
-        profissional: "Lab. Central",
-        departamento: "Laboratório",
-        resumo: "Hemograma completo. Glicemia em jejum: 95 mg/dL. Colesterol total: 210 mg/dL.",
-        diagnostico: "Valores dentro da normalidade",
-    },
-    {
-        id: 3,
-        tipo: "Internação",
-        data: "05/12/2024",
-        profissional: "Dr. Ana Paula Costa",
-        departamento: "UTI",
-        resumo: "Internação por pneumonia bacteriana. 5 dias de antibioticoterapia intravenosa.",
-        diagnostico: "Pneumonia adquirida na comunidade - recuperada",
-    },
-    {
-        id: 4,
-        tipo: "Consulta",
-        data: "20/11/2024",
-        profissional: "Dr. Carlos Mendes",
-        departamento: "Clínica Geral",
-        resumo: "Check-up de rotina. Pressão arterial: 130/85 mmHg. Solicitados exames laboratoriais.",
-        diagnostico: "Hipertensão arterial controlada",
-    },
-];
-
 interface AtendimentoData {
     idAtendimento: number;
     status: string;
-    idPaciente: number;
-    nomePaciente: string;
-    idade: number;
+    motivo: string; // ou motivoQueixa dependendo do seu backend
+    paciente: {
+        idPessoa: number; // Precisamos disso para chamar a outra API
+    };
+}
+
+// Interface para os dados vindos do PacienteController
+interface PacienteData {
+    idPessoa: number;
+    nomeCompleto: string;
     cpf: string;
     dataNascimento: string;
-    // Campos extras que ainda não vêm do banco, mantemos opcionais ou fixos por enquanto
-    alergias?: string[]; 
-    motivoVisita?: string;
+    // Adicione outros campos que vêm do PacienteController se precisar
 }
 
 const AtendimentoClinico = () => {
     const navigate = useNavigate();
-    // const { id } = useParams();
+    const { id } = useParams();
     const { toast } = useToast();
     const [anamnese, setAnamnese] = useState("");
     const [evolucao, setEvolucao] = useState("");
@@ -95,66 +51,72 @@ const AtendimentoClinico = () => {
     const [exames, setExames] = useState("");
     const [modalInternacaoOpen, setModalInternacaoOpen] = useState(false);
     const [modalAltaMedicaOpen, setModalAltaMedicaOpen] = useState(false);
-    // const [atendimentoData, setAtendimentoData] = useState<AtendimentoData | null>(null);
-    // const [loading, setLoading] = useState(true);
+    const [atendimento, setAtendimento] = useState<AtendimentoData | null>(null);
+    const [paciente, setPaciente] = useState<PacienteData | null>(null);
+    const [loading, setLoading] = useState(true);
 
-    // useEffect(() => {
-    //     if (!id) return;
+    useEffect(() => {
+        if (!id) return;
 
-    //     // Substitua pela URL correta da sua API
-    //     fetch(`http://localhost:8080/`)
-    //         .then((res) => {
-    //             if (!res.ok) throw new Error("Erro ao buscar atendimento");
-    //             return res.json();
-    //         })
-    //         .then((data) => {
-    //             setAtendimentoData(data);
-    //         })
-    //         .catch((error) => {
-    //             console.error(error);
-    //             toast({
-    //                 title: "Erro",
-    //                 description: "Não foi possível carregar os dados do paciente.",
-    //                 variant: "destructive",
-    //             });
-    //         })
-    //         .finally(() => {
-    //             setLoading(false);
+        const carregarDados = async () => {
+            try {
+                // 1. Busca o Atendimento para pegar o ID do Paciente
+                const respAtendimento = await fetch(`http://localhost:8080/api/atendimentos/${id}`);
+                if (!respAtendimento.ok) throw new Error("Erro ao buscar atendimento");
+                const dadosAtendimento: AtendimentoData = await respAtendimento.json();
+                setAtendimento(dadosAtendimento);
+
+                // 2. Com o ID do Paciente, busca os dados detalhados no PacienteController
+                if (dadosAtendimento.paciente && dadosAtendimento.paciente.idPessoa) {
+                    const respPaciente = await fetch(`http://localhost:8080/api/pacientes/${dadosAtendimento.paciente.idPessoa}`);
+                    if (!respPaciente.ok) throw new Error("Erro ao buscar paciente");
+                    const dadosPaciente: PacienteData = await respPaciente.json();
+                    setPaciente(dadosPaciente);
+                }
+
+            } catch (error) {
+                console.error(error);
+                toast({
+                    title: "Erro",
+                    description: "Não foi possível carregar os dados.",
+                    variant: "destructive",
+                });
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        carregarDados();
+    }, [id, toast]);
+
+    // const handleSolicitarInternacao = () => {
+    //     setModalInternacaoOpen(true);
+    // };
+
+    // const handleFinalizarAtendimento = () => {
+    //     if (!anamnese && !evolucao && !prescricao && !exames) {
+    //         toast({
+    //             title: "Atenção",
+    //             description: "Preencha ao menos uma seção antes de finalizar.",
+    //             variant: "destructive",
     //         });
-    // }, [id, toast]);
+    //         return;
+    //     }
 
-    // if (!atendimentoData) {
-    //     return <div className="flex h-screen items-center justify-center">Atendimento não encontrado.</div>;
-    // }
+    //     // Abrir modal de alta médica
+    //     setModalAltaMedicaOpen(true);
+    // };
 
-    const handleSolicitarInternacao = () => {
-        setModalInternacaoOpen(true);
-    };
+    // const handleConfirmarAlta = () => {
+    //     toast({
+    //         title: "Atendimento Finalizado",
+    //         description: `Atendimento de ${pacienteAtual.nome} registrado com sucesso.`,
+    //     });
 
-    const handleFinalizarAtendimento = () => {
-        if (!anamnese && !evolucao && !prescricao && !exames) {
-            toast({
-                title: "Atenção",
-                description: "Preencha ao menos uma seção antes de finalizar.",
-                variant: "destructive",
-            });
-            return;
-        }
-
-        // Abrir modal de alta médica
-        setModalAltaMedicaOpen(true);
-    };
-
-    const handleConfirmarAlta = () => {
-        toast({
-            title: "Atendimento Finalizado",
-            description: `Atendimento de ${pacienteAtual.nome} registrado com sucesso.`,
-        });
-
-        setTimeout(() => {
-            navigate("/dashboard-profissional");
-        }, 1500);
-    };
+    //     setTimeout(() => {
+    //         navigate("/dashboard-profissional");
+    //     }, 1500);
+    // };
 
     const getTipoIcon = (tipo: string) => {
         switch (tipo) {
@@ -180,6 +142,18 @@ const AtendimentoClinico = () => {
             default:
                 return "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/30 dark:text-gray-400 dark:border-gray-800";
         }
+    };
+
+    const calcularIdade = (dataNasc: string) => {
+        if (!dataNasc) return "--";
+        const hoje = new Date();
+        const nasc = new Date(dataNasc);
+        let idade = hoje.getFullYear() - nasc.getFullYear();
+        const m = hoje.getMonth() - nasc.getMonth();
+        if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) {
+            idade--;
+        }
+        return idade;
     };
 
     return (
