@@ -93,33 +93,33 @@ const PacientesInternados = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
       {/* Cabeçalho */}
-      <header className="bg-card border-b border-border shadow-sm">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate("/dashboard-profissional")}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <Bed className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-foreground">
-                  Pacientes Internados
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  {pacientesInternados.length} pacientes internados
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/*<header className="bg-card border-b border-border shadow-sm">*/}
+      {/*  <div className="container mx-auto px-6 py-4">*/}
+      {/*    <div className="flex items-center justify-between">*/}
+      {/*      <div className="flex items-center gap-4">*/}
+      {/*        <Button*/}
+      {/*          variant="ghost"*/}
+      {/*          size="sm"*/}
+      {/*          onClick={() => navigate("/dashboard-profissional")}*/}
+      {/*          className="text-muted-foreground hover:text-foreground"*/}
+      {/*        >*/}
+      {/*          <ArrowLeft className="h-5 w-5" />*/}
+      {/*        </Button>*/}
+      {/*        <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">*/}
+      {/*          <Bed className="h-6 w-6 text-primary" />*/}
+      {/*        </div>*/}
+      {/*        <div>*/}
+      {/*          <h1 className="text-xl font-bold text-foreground">*/}
+      {/*            Pacientes Internados*/}
+      {/*          </h1>*/}
+      {/*          <p className="text-sm text-muted-foreground">*/}
+      {/*            {pacientesInternados.length} pacientes internados*/}
+      {/*          </p>*/}
+      {/*        </div>*/}
+      {/*      </div>*/}
+      {/*    </div>*/}
+      {/*  </div>*/}
+      {/*</header>*/}
 
       {/* Conteúdo Principal */}
       <main className="container mx-auto px-6 py-8">

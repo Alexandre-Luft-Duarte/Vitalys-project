@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,9 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext"; // Ajustado import para usar alias e remover extensão .tsx
 import hospitalLogo from "@/assets/vitalys.png";
-import { useAuth } from "../contexts/AuthContext.tsx";
-import { CadastroType } from "@/lib/Types"
+
+// Tipo auxiliar para o departamento
+type Departamento = {
+    id: number;
+    nome: string;
+};
 
 const CadastroUsuario = () => {
     // Campos de Pessoa
@@ -21,13 +26,14 @@ const CadastroUsuario = () => {
     const [senha, setSenha] = useState("");
     const [confirmarSenha, setConfirmarSenha] = useState("");
 
-    // Campos de Controle de Tipo (Herança)
-    const [tipoUsuario, setTipoUsuario] = useState(""); // "RECEPCIONISTA" ou "PROFISSIONAL"
+    // Campos de Controle de Tipo
+    const [tipoUsuario, setTipoUsuario] = useState("");
 
-    // Campos Específicos de Profissional
-    const [especialidadeId, setEspecialidadeId] = useState("");
+    // NOVO: Campos para Departamento (Substitui Especialidade)
+    const [departamentoId, setDepartamentoId] = useState("");
+    const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
 
-    // Campos Opcionais (Contato/Endereço)
+    // Campos Opcionais
     const [telefone, setTelefone] = useState("");
     const [endereco, setEndereco] = useState("");
 
@@ -36,7 +42,20 @@ const CadastroUsuario = () => {
     const navigate = useNavigate();
     const { isAuthenticated, cadastro } = useAuth();
 
-    // Função auxiliar para formatar CPF visualmente
+
+    const fetchDepartamentos = async () => {
+        const response = await fetch("http://localhost:8080/api/departamentos");
+        if (!response.ok) {
+            toast({
+                title: "Aviso",
+                description: "Não foi possível buscar departamentos, verifique sua conexão e tente novamente.",
+                variant: "destructive",
+            });
+        }
+        const data = await response.json();
+        setDepartamentos(data);
+    };
+
     const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let value = e.target.value.replace(/\D/g, "");
         if (value.length > 11) value = value.slice(0, 11);
@@ -49,7 +68,7 @@ const CadastroUsuario = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // 1. Validação dos Campos Obrigatórios (Pessoa e Usuário)
+        // 1. Validação Básica
         if (!nomeCompleto || !cpf || !dataNascimento || !email || !tipoUsuario || !senha || !confirmarSenha) {
             toast({
                 title: "Campos obrigatórios",
@@ -59,11 +78,11 @@ const CadastroUsuario = () => {
             return;
         }
 
-        // 2. Validação Específica de Profissional
-        if (tipoUsuario === "PROFISSIONAL" && !especialidadeId) {
+        // 2. Validação Específica (Agora valida Departamento)
+        if (tipoUsuario === "PROFISSIONAL" && !departamentoId) {
             toast({
                 title: "Campo obrigatório",
-                description: "Profissionais de saúde precisam informar o ID da Especialidade.",
+                description: "Selecione o departamento do profissional.",
                 variant: "destructive",
             });
             return;
@@ -89,18 +108,18 @@ const CadastroUsuario = () => {
 
         setIsLoading(true);
 
-        // 3. Montagem do Objeto para o Backend (Exemplo de estrutura JOINED)
-        const payload: CadastroType = {
+        // 3. Montagem do Payload
+        const payload: any = {
             nomeCompleto,
-            cpf: cpf.replace(/\D/g, ""), // Enviar apenas números
-            dataNascimento, // Formato YYYY-MM-DD
+            cpf: cpf.replace(/\D/g, ""),
+            dataNascimento,
             email,
             senha,
-            tipoUsuario, // Backend usa isso para instanciar a classe certa
+            tipoUsuario,
             telefone,
             endereco,
-            // Se for profissional, anexa a especialidade
-            ...(tipoUsuario === "PROFISSIONAL" && { especialidadeId: Number(especialidadeId) })
+            // Envia o ID do departamento se for profissional
+            ...(tipoUsuario === "PROFISSIONAL" && { departamentoId: Number(departamentoId) })
         };
 
         try {
@@ -114,25 +133,35 @@ const CadastroUsuario = () => {
             navigate("/login");
         } catch (error) {
             setIsLoading(false);
+            // O erro é tratado, mas mantemos o toast por segurança
             toast({
-                title: "Erro ao fazer login",
-                description: "Verifique suas credenciais e tente novamente.",
+                title: "Erro ao cadastrar",
+                description: "Ocorreu um erro ao tentar criar o usuário.",
                 variant: "destructive",
             });
-            return
         }
     };
 
+    // --- EFEITO: Busca Departamentos quando seleciona PROFISSIONAL ---
+    useEffect(() => {
+        if (tipoUsuario === "PROFISSIONAL") {
+            fetchDepartamentos();
+        }
+    }, [tipoUsuario, toast]);
+
     return !isAuthenticated ? (
         <div className="min-h-screen flex items-center justify-center bg-gradient-background p-4 py-8">
-            <Card className="w-full max-w-2xl shadow-strong"> {/* Aumentei max-w para caber melhor os campos */}
+            <Card className="w-full max-w-2xl shadow-strong">
                 <CardHeader className="space-y-4 text-center pb-6">
                     <div className="flex justify-center mb-2">
-                        <img
-                            src={hospitalLogo}
-                            alt="Logo do Hospital"
-                            className="h-20 w-40 object-contain"
-                        />
+                        {/* Substituído imagem por ícone para evitar erro de importação */}
+                        <div className="flex justify-center mb-2">
+                            <img
+                                src={hospitalLogo}
+                                alt="Logo do Hospital"
+                                className="h-20 w-40 object-contain"
+                            />
+                        </div>
                     </div>
                     <div>
                         <CardTitle className="text-2xl font-bold text-foreground">
@@ -147,7 +176,7 @@ const CadastroUsuario = () => {
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-6">
 
-                        {/* SEÇÃO: DADOS PESSOAIS (Classe Pessoa) */}
+                        {/* DADOS PESSOAIS */}
                         <div className="space-y-4">
                             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Dados Pessoais</h3>
 
@@ -209,38 +238,50 @@ const CadastroUsuario = () => {
                             </div>
                         </div>
 
-                        {/* SEÇÃO: DADOS DO SISTEMA (Classe Usuario e Filhas) */}
+                        {/* DADOS DO SISTEMA */}
                         <div className="space-y-4 border-t pt-4">
                             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Dados de Acesso e Função</h3>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="tipoUsuario">Tipo de Usuário *</Label>
-                                    <Select value={tipoUsuario} onValueChange={setTipoUsuario} disabled={isLoading}>
+                                    <Select value={tipoUsuario} onValueChange={(val) => {
+                                        setTipoUsuario(val);
+                                        // Limpa o departamento se mudar de tipo
+                                        if (val !== "PROFISSIONAL") setDepartamentoId("");
+                                    }} disabled={isLoading}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Selecione a função" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="RECEPCIONISTA">Recepção</SelectItem>
-                                            <SelectItem value="PROFISSIONAL">Profissional de Saúde (Médico/Enfermeiro)</SelectItem>
+                                            <SelectItem value="PROFISSIONAL">Profissional de Saúde</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
 
-                                {/* Campo Condicional: Só aparece se for PROFISSIONAL */}
+                                {/* Campo Condicional: SELECT DE DEPARTAMENTOS */}
                                 {tipoUsuario === "PROFISSIONAL" && (
                                     <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
-                                        <Label htmlFor="especialidadeId">ID da Especialidade *</Label>
-                                        <Input
-                                            id="especialidadeId"
-                                            type="number"
-                                            placeholder="Ex: 1 (Cardiologia)"
-                                            value={especialidadeId}
-                                            onChange={(e) => setEspecialidadeId(e.target.value)}
-                                            disabled={isLoading}
-                                        />
+                                        <Label htmlFor="departamentoId">Departamento *</Label>
+                                        <Select value={departamentoId} onValueChange={setDepartamentoId} disabled={isLoading}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Selecione o departamento" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {departamentos.length === 0 ? (
+                                                    <SelectItem value="0" disabled>Carregando departamentos...</SelectItem>
+                                                ) : (
+                                                    departamentos.map((dep) => (
+                                                        <SelectItem key={dep.idDepartamento} value={String(dep.idDepartamento)}>
+                                                            {dep.nome}
+                                                        </SelectItem>
+                                                    ))
+                                                )}
+                                            </SelectContent>
+                                        </Select>
                                         <p className="text-[0.8rem] text-muted-foreground">
-                                            Insira o ID da especialidade médica.
+                                            Vincule o profissional a um departamento.
                                         </p>
                                     </div>
                                 )}

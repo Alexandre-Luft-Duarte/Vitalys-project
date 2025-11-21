@@ -11,8 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import HeaderNav from "@/components/HeaderNav";
-import { CadastroPacienteType } from "@/lib/Types.tsx";
+import { CadastroPacienteType } from "@/lib/types.ts";
+import {UFS} from "@/lib/constants.ts"
 
 // --- LÓGICA DE VALIDAÇÃO (REGRAS DE NEGÓCIO) ---
 const cadastroSchema = z.object({
@@ -62,11 +62,6 @@ const cadastroSchema = z.object({
 
 type CadastroFormData = z.infer<typeof cadastroSchema>;
 
-// Lista de Estados Brasileiros
-const UFs = [
-    "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG",
-    "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
-];
 
 const CadastroPaciente = () => {
     const navigate = useNavigate();
@@ -363,7 +358,7 @@ const CadastroPaciente = () => {
                                             <SelectValue placeholder="UF" />
                                         </SelectTrigger>
                                         <SelectContent className="max-h-[200px]">
-                                            {UFs.map((uf) => (
+                                            {UFS.map((uf) => (
                                                 <SelectItem key={uf} value={uf}>{uf}</SelectItem>
                                             ))}
                                         </SelectContent>

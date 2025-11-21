@@ -7,7 +7,7 @@ import {  } from "lucide-react";
 import {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast.ts";
-import { PacienteListagemType } from "@/lib/Types.tsx";
+import { PacienteListagemType } from "@/lib/types.ts";
 
 
 // Dados de exemplo para a fila de chegada

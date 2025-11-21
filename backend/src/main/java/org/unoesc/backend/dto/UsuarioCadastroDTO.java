@@ -14,7 +14,7 @@ public record UsuarioCadastroDTO(
         String tipoUsuario, // "PROFISSIONAL" ou "RECEPCIONISTA"
 
         // Específico para Profissional (pode ser nulo se for Recepcionista)
-        Long especialidadeId,
+        Long departamentoId,
 
         // Opcionais de contato
         String telefone,

@@ -5,16 +5,7 @@ import { Search, ArrowLeft, UserCircle } from "lucide-react";
 import {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast.ts";
-import { PacienteListagemType } from "@/lib/Types.tsx";
-
-// Dados de exemplo - pacientes cadastrados
-// const pacientesCadastrados = [
-//     { id: 1, nome: "Maria Silva Santos", cpf: "123.456.789-00", matricula: "P001", dataNascimento: "15/03/1985" },
-//     { id: 2, nome: "João Pedro Oliveira", cpf: "234.567.890-11", matricula: "P002", dataNascimento: "22/07/1992" },
-//     { id: 3, nome: "Ana Paula Costa", cpf: "345.678.901-22", matricula: "P003", dataNascimento: "10/12/1978" },
-//     { id: 4, nome: "Carlos Eduardo Mendes", cpf: "456.789.012-33", matricula: "P004", dataNascimento: "05/09/1988" },
-//     { id: 5, nome: "Fernanda Rodrigues", cpf: "567.890.123-44", matricula: "P005", dataNascimento: "18/04/1995" },
-// ];
+import { PacienteListagemType } from "@/lib/types.ts";
 
 const BuscarPaciente = () => {
     const { toast } = useToast();

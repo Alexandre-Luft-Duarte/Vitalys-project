@@ -9,21 +9,21 @@ import java.time.LocalDate;
 @PrimaryKeyJoinColumn(name = "id_pessoa")
 public class Profissional extends Usuario{
     @ManyToOne
-    @JoinColumn(name = "id_especialidade", nullable = false)
-    private Especialidade especialidade;
+    @JoinColumn(name = "id_departamento", nullable = false)
+    private Departamento departamento;
 
-    public Profissional(Long idPessoa, String nomeCompleto, String cpf, LocalDate dataNascimento, Boolean statusAtivo, String email, String senha, Especialidade especialidade) {
+    public Profissional(Long idPessoa, String nomeCompleto, String cpf, LocalDate dataNascimento, Boolean statusAtivo, String email, String senha, Departamento departamento) {
         super(idPessoa, nomeCompleto, cpf, dataNascimento, statusAtivo, email, senha);
-        this.especialidade = especialidade;
+        this.departamento = departamento;
     }
 
     public Profissional() {}
 
-    public Especialidade getEspecialidade() {
-        return especialidade;
+    public Departamento getDepartamento() {
+        return departamento;
     }
 
-    public void setEspecialidade(Especialidade especialidade) {
-        this.especialidade = especialidade;
+    public void setDepartamento(Departamento departamento) {
+        this.departamento = departamento;
     }
 }

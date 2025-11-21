@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { DEPARTAMENTOS } from "@/lib/constants.ts";
 import {
     Select,
     SelectContent,
@@ -36,19 +37,6 @@ interface RegistrarAtendimentoModalProps {
     pacienteNome: string;
     pacienteId: number;
 }
-
-const departamentos = [
-    "Clínica Geral",
-    "Cardiologia",
-    "Ortopedia",
-    "Pediatria",
-    "Neurologia",
-    "Dermatologia",
-    "Oftalmologia",
-    "Ginecologia",
-    "Urgência",
-    "Triagem",
-];
 
 const RegistrarAtendimentoModal = ({
                                        open,
@@ -157,7 +145,7 @@ const RegistrarAtendimentoModal = ({
                                 <SelectValue placeholder="Selecione o departamento" />
                             </SelectTrigger>
                             <SelectContent className="z-[100]">
-                                {departamentos.map((dept) => (
+                                {DEPARTAMENTOS.map((dept) => (
                                     <SelectItem key={dept} value={dept}>
                                         {dept}
                                     </SelectItem>

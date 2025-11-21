@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { UserCircle, LogOut, ClipboardList } from "lucide-react";
+import {UserCircle, LogOut, ClipboardList, UserPlus, ClipboardPlus} from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -115,51 +115,67 @@ const DashboardProfissional = () => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
             {/* Cabeçalho */}
-            <header className="bg-card border-b border-border shadow-sm">
-                <div className="container mx-auto px-6 py-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                                <ClipboardList className="h-6 w-6 text-primary" />
-                            </div>
-                            <div>
-                                <h1 className="text-xl font-bold text-foreground">
-                                    Fila de Atendimento - {departamento}
-                                </h1>
-                                <p className="text-sm text-muted-foreground">
-                                    {pacientesAguardando} aguardando • {pacientesEmAtendimento} em atendimento
-                                </p>
-                            </div>
-                        </div>
+            {/*<header className="bg-card border-b border-border shadow-sm">*/}
+            {/*    <div className="container mx-auto px-6 py-4">*/}
+            {/*        <div className="flex items-center justify-between">*/}
+            {/*            <div className="flex items-center gap-4">*/}
+            {/*                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">*/}
+            {/*                    <ClipboardList className="h-6 w-6 text-primary" />*/}
+            {/*                </div>*/}
+            {/*                <div>*/}
+            {/*                    <h1 className="text-xl font-bold text-foreground">*/}
+            {/*                        Fila de Atendimento - {departamento}*/}
+            {/*                    </h1>*/}
+            {/*                    <p className="text-sm text-muted-foreground">*/}
+            {/*                        {pacientesAguardando} aguardando • {pacientesEmAtendimento} em atendimento*/}
+            {/*                    </p>*/}
+            {/*                </div>*/}
+            {/*            </div>*/}
 
-                        <div className="flex items-center gap-4">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => navigate("/pacientes-internados")}
-                                className="border-primary/20 hover:bg-primary/10"
-                            >
-                                Ver Pacientes Internados
-                            </Button>
-                            <div className="flex items-center gap-2 text-sm">
-                                <UserCircle className="h-5 w-5 text-muted-foreground" />
-                                <span className="font-medium text-foreground">{profissionalNome}</span>
-                            </div>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={handleLogout}
-                                className="text-muted-foreground hover:text-destructive"
-                            >
-                                <LogOut className="h-4 w-4" />
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            </header>
+            {/*            <div className="flex items-center gap-4">*/}
+            {/*                <Button*/}
+            {/*                    variant="outline"*/}
+            {/*                    size="sm"*/}
+            {/*                    onClick={() => navigate("/pacientes-internados")}*/}
+            {/*                    className="border-primary/20 hover:bg-primary/10"*/}
+            {/*                >*/}
+            {/*                    Ver Pacientes Internados*/}
+            {/*                </Button>*/}
+            {/*                <div className="flex items-center gap-2 text-sm">*/}
+            {/*                    <UserCircle className="h-5 w-5 text-muted-foreground" />*/}
+            {/*                    <span className="font-medium text-foreground">{profissionalNome}</span>*/}
+            {/*                </div>*/}
+            {/*                <Button*/}
+            {/*                    variant="ghost"*/}
+            {/*                    size="sm"*/}
+            {/*                    onClick={handleLogout}*/}
+            {/*                    className="text-muted-foreground hover:text-destructive"*/}
+            {/*                >*/}
+            {/*                    <LogOut className="h-4 w-4" />*/}
+            {/*                </Button>*/}
+            {/*            </div>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*</header>*/}
+
+
 
             {/* Conteúdo Principal */}
             <main className="container mx-auto px-6 py-8">
+
+                <section className="mb-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
+                        <Button
+                            size="lg"
+                            onClick={() => navigate("/pacientes-internados")}
+                            className="h-20 text-lg font-semibold bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity shadow-md"
+                        >
+                            <ClipboardPlus className="h-6 w-6 mr-3" />
+                            Pacientes Internados
+                        </Button>
+                    </div>
+                </section>
+
                 <div className="bg-card rounded-lg border border-border shadow-md overflow-hidden">
                     {/* Cabeçalho da Tabela */}
                     <div className="bg-gradient-to-r from-primary to-accent px-6 py-4">

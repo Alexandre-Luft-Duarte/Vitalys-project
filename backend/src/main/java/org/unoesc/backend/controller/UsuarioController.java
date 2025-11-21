@@ -17,7 +17,7 @@ public class UsuarioController {
 
     @Autowired private RecepcionistaRepository recepcionistaRepository;
     @Autowired private ProfissionalRepository profissionalRepository;
-    @Autowired private EspecialidadeRepository especialidadeRepository;
+    @Autowired private DepartamentoRepository departamentoRepository;
     @Autowired private UsuarioRepository usuarioRepository; // Para verificar email duplicado
 
     @PostMapping("/cadastro")
@@ -35,15 +35,15 @@ public class UsuarioController {
 
         // 2. Lógica para PROFISSIONAL
         if ("PROFISSIONAL".equalsIgnoreCase(dados.tipoUsuario())) {
-            if (dados.especialidadeId() == null) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID da Especialidade é obrigatório para profissionais.");
+            if (dados.departamentoId() == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID do Departamento é obrigatório para profissionais.");
             }
 
-            Especialidade especialidade = especialidadeRepository.findById(dados.especialidadeId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Especialidade não encontrada."));
+            Departamento departamento = departamentoRepository.findById(dados.departamentoId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Departamento não encontrado."));
 
             Profissional prof = new Profissional();
-            prof.setEspecialidade(especialidade);
+            prof.setDepartamento(departamento);
             // Configura os dados comuns (veja abaixo)
             preencherDadosComuns(prof, dados);
 

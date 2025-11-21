@@ -21,10 +21,11 @@ public class Atendimento {
     private StatusAtendimento status;
 
     @ManyToOne
-    private Paciente paciente;
+    @JoinColumn(nullable = true)
+    private Profissional profissional;
 
     @ManyToOne
-    private Profissional profissional;
+    private Paciente paciente;
 
     @ManyToOne
     private Recepcionista recepcionista;
