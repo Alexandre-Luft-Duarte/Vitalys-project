@@ -26,7 +26,6 @@ const BuscarPaciente = () => {
             });
         }
         const pacientes = await response.json();
-        console.log("Pacientes buscados:", pacientes);
         setPacientes(pacientes);
         setResultados(pacientes);
     }

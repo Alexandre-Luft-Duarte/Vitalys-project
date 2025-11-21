@@ -17,27 +17,22 @@ import {
     Pill,
     FlaskConical
 } from "lucide-react";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "../hooks/use-toast.ts";
 import SolicitarInternacaoModal from "../components/SolicitarInternacaoModal.tsx";
 import RegistrarAltaMedicaModal from "../components/RegistrarAltaMedica.tsx";
 
-// Dados do paciente (exemplo)
 const pacienteAtual = {
     id: 1,
     nome: "Maria Silva Santos",
     idade: 45,
-    genero: "Feminino",
     cpf: "123.456.789-00",
     dataNascimento: "15/03/1979",
     alergias: ["Penicilina", "Dipirona"],
-    convenio: "Unimed Premium",
     motivoVisita: "Dor no peito",
-    horaChegada: "08:15",
 };
 
-// Histórico clínico (exemplo)
 const historicoClinico = [
     {
         id: 1,
@@ -77,8 +72,22 @@ const historicoClinico = [
     },
 ];
 
+interface AtendimentoData {
+    idAtendimento: number;
+    status: string;
+    idPaciente: number;
+    nomePaciente: string;
+    idade: number;
+    cpf: string;
+    dataNascimento: string;
+    // Campos extras que ainda não vêm do banco, mantemos opcionais ou fixos por enquanto
+    alergias?: string[]; 
+    motivoVisita?: string;
+}
+
 const AtendimentoClinico = () => {
     const navigate = useNavigate();
+    // const { id } = useParams();
     const { toast } = useToast();
     const [anamnese, setAnamnese] = useState("");
     const [evolucao, setEvolucao] = useState("");
@@ -86,6 +95,37 @@ const AtendimentoClinico = () => {
     const [exames, setExames] = useState("");
     const [modalInternacaoOpen, setModalInternacaoOpen] = useState(false);
     const [modalAltaMedicaOpen, setModalAltaMedicaOpen] = useState(false);
+    // const [atendimentoData, setAtendimentoData] = useState<AtendimentoData | null>(null);
+    // const [loading, setLoading] = useState(true);
+
+    // useEffect(() => {
+    //     if (!id) return;
+
+    //     // Substitua pela URL correta da sua API
+    //     fetch(`http://localhost:8080/`)
+    //         .then((res) => {
+    //             if (!res.ok) throw new Error("Erro ao buscar atendimento");
+    //             return res.json();
+    //         })
+    //         .then((data) => {
+    //             setAtendimentoData(data);
+    //         })
+    //         .catch((error) => {
+    //             console.error(error);
+    //             toast({
+    //                 title: "Erro",
+    //                 description: "Não foi possível carregar os dados do paciente.",
+    //                 variant: "destructive",
+    //             });
+    //         })
+    //         .finally(() => {
+    //             setLoading(false);
+    //         });
+    // }, [id, toast]);
+
+    // if (!atendimentoData) {
+    //     return <div className="flex h-screen items-center justify-center">Atendimento não encontrado.</div>;
+    // }
 
     const handleSolicitarInternacao = () => {
         setModalInternacaoOpen(true);
@@ -164,7 +204,7 @@ const AtendimentoClinico = () => {
                                     Atendimento Clínico
                                 </h1>
                                 <p className="text-sm text-muted-foreground">
-                                    {pacienteAtual.nome} • {pacienteAtual.motivoVisita}
+                                    {/* {atendimentoData.nomePaciente} • {atendimentoData.motivoVisita || "Consulta de Rotina"} */}
                                 </p>
                             </div>
                         </div>
@@ -211,7 +251,7 @@ const AtendimentoClinico = () => {
                         <CardContent className="pt-4 space-y-4">
                             <div>
                                 <p className="text-xs text-muted-foreground mb-1">Nome Completo</p>
-                                <p className="text-sm font-semibold text-foreground">{pacienteAtual.nome}</p>
+                                {/* <p className="text-sm font-semibold text-foreground">{atendimentoData.nomePaciente}</p> */}
                             </div>
 
                             <Separator />
@@ -219,30 +259,20 @@ const AtendimentoClinico = () => {
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
                                     <p className="text-xs text-muted-foreground mb-1">Idade</p>
-                                    <p className="text-sm font-medium text-foreground">{pacienteAtual.idade} anos</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-muted-foreground mb-1">Gênero</p>
-                                    <p className="text-sm font-medium text-foreground">{pacienteAtual.genero}</p>
+                                    {/* <p className="text-sm font-medium text-foreground">{atendimentoData.idade} anos</p> */}
                                 </div>
                             </div>
 
                             <div>
                                 <p className="text-xs text-muted-foreground mb-1">CPF</p>
-                                <p className="text-sm font-medium text-foreground">{pacienteAtual.cpf}</p>
+                                {/* <p className="text-sm font-medium text-foreground">{atendimentoData.cpf}</p> */}
                             </div>
 
                             <div>
                                 <p className="text-xs text-muted-foreground mb-1">Data de Nascimento</p>
-                                <p className="text-sm font-medium text-foreground">{pacienteAtual.dataNascimento}</p>
+                                {/* <p className="text-sm font-medium text-foreground">{atendimentoData.dataNascimento}</p> */}
                             </div>
 
-                            <Separator />
-
-                            <div>
-                                <p className="text-xs text-muted-foreground mb-1">Convênio</p>
-                                <p className="text-sm font-medium text-foreground">{pacienteAtual.convenio}</p>
-                            </div>
 
                             <Separator />
 
@@ -263,16 +293,7 @@ const AtendimentoClinico = () => {
                                     ))}
                                 </div>
                             </div>
-
-                            <Separator />
-
-                            <div>
-                                <div className="flex items-center gap-2 mb-1">
-                                    <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
-                                    <p className="text-xs text-muted-foreground">Chegada</p>
-                                </div>
-                                <p className="text-sm font-medium text-foreground">{pacienteAtual.horaChegada}</p>
-                            </div>
+                            
                         </CardContent>
                     </Card>
                 </aside>
@@ -294,15 +315,6 @@ const AtendimentoClinico = () => {
                                 <TabsList className="grid w-full grid-cols-4 mb-6">
                                     <TabsTrigger value="anamnese" className="text-sm">
                                         Anamnese
-                                    </TabsTrigger>
-                                    <TabsTrigger value="evolucao" className="text-sm">
-                                        Evolução
-                                    </TabsTrigger>
-                                    <TabsTrigger value="prescricao" className="text-sm">
-                                        Prescrição
-                                    </TabsTrigger>
-                                    <TabsTrigger value="exames" className="text-sm">
-                                        Exames
                                     </TabsTrigger>
                                 </TabsList>
 

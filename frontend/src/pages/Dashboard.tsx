@@ -31,7 +31,8 @@ const Dashboard = () => {
     const navigator = useNavigate();
 
     const handleNovoPaciente = () => {
-        navigator("/cadastro-paciente");
+        // navigator("/cadastro-paciente");
+        navigator("/dashboard-profissional");
     };
 
     const handleSelecionarPaciente = (id: number, nome: string) => {
@@ -113,7 +114,7 @@ const Dashboard = () => {
                             type="text"
                             placeholder="Digite o nome, CPF ou matrícula do paciente..."
                             value={busca}
-                            onChange={(e) => handleBusca(e.target.value)}
+                            onChange={(e: any) => handleBusca(e.target.value)}
                             className="pl-10 h-12 text-base"
                         />
                     </div>
@@ -158,7 +159,7 @@ const Dashboard = () => {
                                     </div>
                                     <Button
                                         variant="outline"
-                                        onClick={(e) => {
+                                        onClick={(e: any) => {
                                             e.stopPropagation();
                                             handleSelecionarPaciente(paciente.id, paciente.nome);
                                         }}

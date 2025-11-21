@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import {UserCircle, LogOut, ClipboardList, UserPlus, ClipboardPlus} from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
@@ -14,71 +14,127 @@ interface Paciente {
     status: "Aguardando" | "Em Atendimento" | "Finalizado";
 }
 
-const pacientesIniciais: Paciente[] = [
-    {
-        id: 1,
-        nome: "Maria Silva Santos",
-        horaChegada: "08:15",
-        motivoVisita: "Consulta de rotina",
-        status: "Aguardando",
-    },
-    {
-        id: 2,
-        nome: "João Pedro Oliveira",
-        horaChegada: "08:32",
-        motivoVisita: "Dor no peito",
-        status: "Aguardando",
-    },
-    {
-        id: 3,
-        nome: "Ana Paula Costa",
-        horaChegada: "08:47",
-        motivoVisita: "Check-up anual",
-        status: "Em Atendimento",
-    },
-    {
-        id: 4,
-        nome: "Carlos Eduardo Mendes",
-        horaChegada: "09:05",
-        motivoVisita: "Renovação de receita",
-        status: "Aguardando",
-    },
-    {
-        id: 5,
-        nome: "Fernanda Rodrigues",
-        horaChegada: "09:18",
-        motivoVisita: "Dor nas costas",
-        status: "Aguardando",
-    },
-];
+interface AtendimentoBackend {
+    idAtendimento: number;
+    dataHora: string;
+    status: string; 
+    motivo: string;
+    nomePaciente: string; // <--- Mudou aqui! Vem direto agora.
+}
+
+interface PacienteDisplay {
+    id: number;
+    nome: string;
+    horaChegada: string;
+    motivoVisita: string;
+    status: "Aguardando" | "Em Atendimento" | "Finalizado";
+}
+
 
 const DashboardProfissional = () => {
-    const [pacientes, setPacientes] = useState<Paciente[]>(pacientesIniciais);
+    const [pacientes, setPacientes] = useState<Paciente[]>([]);
     const navigate = useNavigate();
     const { toast } = useToast();
     const profissionalNome = "Dr. Roberto Almeida";
     const departamento = "Clínica Geral";
+    const [loading, setLoading] = useState(true);
 
-    const handleChamarPaciente = (id: number) => {
-        setPacientes((prev) =>
-            prev.map((p) =>
-                p.id === id ? { ...p, status: "Em Atendimento" as const } : p
-            )
-        );
+    // --- 1. BUSCAR DADOS DO BANCO ---
+    const fetchAtendimentos = async () => {
+        try {
+            // Busca todos os atendimentos (você pode filtrar por status na URL se preferir)
+            const response = await fetch("http://localhost:8080/api/atendimentos");
+            if (!response.ok) throw new Error("Falha ao buscar");
+            
+            const data: AtendimentoBackend[] = await response.json();
+            console.log('a:', data)
+            
+            // Filtra apenas os que não estão finalizados para o Dashboard
+            const ativos = data.filter(a => a.status !== "FINALIZADO");
 
-        const paciente = pacientes.find((p) => p.id === id);
-        if (paciente) {
-            toast({
-                title: "Paciente chamado",
-                description: `${paciente.nome} está sendo direcionado ao consultório.`,
-            });
-
-            // Navegar para a tela de atendimento clínico
-            setTimeout(() => {
-                navigate("/atendimento-clinico");
-            }, 1000);
+            // Mapeia do formato Java para o formato da Tabela React
+            const formatados: PacienteDisplay[] = ativos.map(item => ({
+                id: item.idAtendimento,
+                nome: item.nomePaciente,
+                // Formata a data ISO (2024-03-15T08:00:00) para Hora (08:00)
+                horaChegada: new Date(item.dataHora).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                motivoVisita: item.motivo || "Sem motivo registrado",
+                // Converte ENUM (AGUARDANDO) para Texto Bonito (Aguardando)
+                status: mapStatus(item.status)
+            }));
+            console.log(formatados)
+            setPacientes(formatados);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false); 
         }
     };
+
+    useEffect(() => {
+        fetchAtendimentos();
+    }, []);
+
+    // Auxiliar para converter o Status
+    const mapStatus = (statusBackend: string): PacienteDisplay["status"] => {
+        if (statusBackend === "EM_ATENDIMENTO") return "Em Atendimento";
+        if (statusBackend === "FINALIZADO") return "Finalizado";
+        return "Aguardando";
+    };
+
+    // const handleChamarPaciente = async (id: number) => {
+    //     try {
+    //         // Chama o endpoint que muda o status para EM_ATENDIMENTO
+    //         const response = await fetch(`http://localhost:8080/api/atendimentos/${id}/iniciar`, {
+    //             method: "PUT"
+    //         });
+
+    //         if (!response.ok) throw new Error("Erro ao iniciar atendimento");
+
+    //         toast({
+    //             title: "Atendimento Iniciado",
+    //             description: "Direcionando para o prontuário...",
+    //         });
+
+    //         // Atualiza a lista localmente para feedback visual imediato
+    //         setPacientes((prev) =>
+    //             prev.map((p) => p.id === id ? { ...p, status: "Em Atendimento" } : p)
+    //         );
+
+    //         // Navega passando o ID real do atendimento
+    //         setTimeout(() => {
+    //             navigate(`/atendimento-clinico/${id}`); // <--- IMPORTANTE: Passar o ID na URL
+    //         }, 1000);
+
+    //     } catch (error) {
+    //         toast({
+    //             title: "Erro",
+    //             description: "Não foi possível iniciar o atendimento.",
+    //             variant: "destructive",
+    //         });
+    //     }
+    // };
+
+    // const handleChamarPaciente = (id: number) => {
+    //     setPacientes((prev) =>
+    //         prev.map((p) =>
+    //             p.id === id ? { ...p, status: "Em Atendimento" as const } : p
+    //         )
+    //     );
+
+    //     const paciente = pacientes.find((p) => p.id === id);
+    //     if (paciente) {
+    //         toast({
+    //             title: "Paciente chamado",
+    //             description: `${paciente.nome} está sendo direcionado ao consultório.`,
+    //         });
+
+    //         // Navegar para a tela de atendimento clínico
+    //         setTimeout(() => {
+    //             navigate("/atendimento-clinico");
+    //         }, 1000);
+    //     }
+    // };
 
     const handleLogout = () => {
         console.log("Logout");
@@ -167,7 +223,8 @@ const DashboardProfissional = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
                         <Button
                             size="lg"
-                            onClick={() => navigate("/pacientes-internados")}
+                            // onClick={() => navigate("/pacientes-internados")}
+                            onClick={() => navigate("/atendimento-clinico")}
                             className="h-20 text-lg font-semibold bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity shadow-md"
                         >
                             <ClipboardPlus className="h-6 w-6 mr-3" />
@@ -185,68 +242,58 @@ const DashboardProfissional = () => {
                         <p className="text-sm text-primary-foreground/80 mt-1">
                             Gerencie seus atendimentos de forma eficiente
                         </p>
+                        <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => navigate("/pacientes-internados")}
+                                className="border-primary/20 hover:bg-primary/10"
+                            >
+                                Ver Pacientes Internados
+                        </Button>
                     </div>
 
                     {/* Tabela de Pacientes */}
                     <div className="p-6">
-                        {pacientes.length === 0 ? (
+                        {/* 1. VERIFICAÇÃO DE CARREGAMENTO */}
+                        {loading ? (
+                            <div className="text-center py-16 text-muted-foreground animate-pulse">
+                                <p className="text-lg font-medium">Carregando fila de atendimento...</p>
+                            </div>
+                        ) : pacientes.length === 0 ? (
+                            /* 2. LISTA VAZIA (Igual você já tinha) */
                             <div className="text-center py-16 text-muted-foreground">
                                 <ClipboardList className="h-16 w-16 mx-auto mb-4 opacity-40" />
                                 <p className="text-lg font-medium">Nenhum paciente na fila</p>
                                 <p className="text-sm mt-1">Aguardando novos pacientes...</p>
                             </div>
                         ) : (
+                            /* 3. TABELA DE DADOS (Mantém a estrutura, mas agora usa os dados reais) */
                             <Table>
                                 <TableHeader>
                                     <TableRow className="border-b border-border hover:bg-transparent">
-                                        <TableHead className="font-semibold text-foreground w-[30%]">
-                                            Paciente
-                                        </TableHead>
-                                        <TableHead className="font-semibold text-foreground w-[12%]">
-                                            Hora da Chegada
-                                        </TableHead>
-                                        <TableHead className="font-semibold text-foreground w-[35%]">
-                                            Motivo da Visita
-                                        </TableHead>
-                                        <TableHead className="font-semibold text-foreground w-[15%]">
-                                            Status
-                                        </TableHead>
-                                        <TableHead className="font-semibold text-foreground w-[8%] text-center">
-                                            Ação
-                                        </TableHead>
+                                        <TableHead className="font-semibold text-foreground w-[30%]">Paciente</TableHead>
+                                        <TableHead className="font-semibold text-foreground w-[12%]">Hora</TableHead>
+                                        <TableHead className="font-semibold text-foreground w-[35%]">Motivo</TableHead>
+                                        <TableHead className="font-semibold text-foreground w-[15%]">Status</TableHead>
+                                        <TableHead className="font-semibold text-foreground w-[8%] text-center">Ação</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {pacientes.map((paciente) => (
-                                        <TableRow
-                                            key={paciente.id}
-                                            className="border-b border-border hover:bg-muted/50 transition-colors animate-fade-in"
-                                        >
-                                            <TableCell className="font-medium text-foreground">
-                                                {paciente.nome}
-                                            </TableCell>
-                                            <TableCell className="text-muted-foreground">
-                                                {paciente.horaChegada}
-                                            </TableCell>
-                                            <TableCell className="text-muted-foreground">
-                                                {paciente.motivoVisita}
-                                            </TableCell>
+                                        <TableRow key={paciente.id} className="border-b border-border hover:bg-muted/50 transition-colors animate-fade-in">
+                                            <TableCell className="font-medium text-foreground">{paciente.nome}</TableCell>
+                                            <TableCell className="text-muted-foreground">{paciente.horaChegada}</TableCell>
+                                            <TableCell className="text-muted-foreground">{paciente.motivoVisita}</TableCell>
                                             <TableCell>{getStatusBadge(paciente.status)}</TableCell>
                                             <TableCell className="text-center">
-                                                {paciente.status === "Aguardando" && (
-                                                    <Button
-                                                        size="sm"
-                                                        onClick={() => handleChamarPaciente(paciente.id)}
-                                                        className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity font-semibold shadow-sm animate-scale-in"
-                                                    >
+                                                {/* {paciente.status === "Aguardando" ? (
+                                                    <Button size="sm" onClick={() => handleChamarPaciente(paciente.id)} className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity font-semibold shadow-sm">
                                                         Chamar
                                                     </Button>
-                                                )}
-                                                {paciente.status === "Em Atendimento" && (
-                                                    <span className="text-xs text-muted-foreground italic">
-                            Atendendo
-                          </span>
-                                                )}
+                                                ) : null} */}
+                                                {paciente.status === "Em Atendimento" ? (
+                                                    <span className="text-xs text-muted-foreground italic">Atendendo</span>
+                                                ) : null}
                                             </TableCell>
                                         </TableRow>
                                     ))}

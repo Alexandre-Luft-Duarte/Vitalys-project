@@ -85,12 +85,18 @@ INSERT INTO paciente (id_pessoa, descricao_medica) VALUES
 -- Atendimento 1: Carlos (6) chegou, foi atendido pela Maria (1) e está AGUARDANDO na Clínica Geral (2).
 INSERT INTO atendimento (data_hora, status, paciente_id_pessoa, recepcionista_id_pessoa, departamento_id_departamento, profissional_id_pessoa, motivo)
 VALUES ('2025-11-18 08:00:00', 'AGUARDANDO', 6, 1, 2, NULL, 'Chegou no hospital');
+INSERT INTO atendimento (data_hora, status, paciente_id_pessoa, recepcionista_id_pessoa, departamento_id_departamento, profissional_id_pessoa, motivo)
+VALUES ('2025-11-18 08:00:00', 'AGUARDANDO', 6, 1, 2, NULL, 'Chegou no hospital');
 
 -- Atendimento 2: Ana (7) está EM_ATENDIMENTO com a Dra. Grey (4) na Pediatria (3).
 INSERT INTO atendimento (data_hora, status, paciente_id_pessoa, recepcionista_id_pessoa, departamento_id_departamento, profissional_id_pessoa, motivo)
 VALUES ('2025-11-18 09:30:00', 'EM_ATENDIMENTO', 7, 2, 3, 4, 'Paciente com dores no peito');
+INSERT INTO atendimento (data_hora, status, paciente_id_pessoa, recepcionista_id_pessoa, departamento_id_departamento, profissional_id_pessoa, motivo)
+VALUES ('2025-11-18 09:30:00', 'EM_ATENDIMENTO', 7, 2, 3, 4, 'Paciente com dores no peito');
 
 -- Atendimento 3: Pedro (8) teve o atendimento FINALIZADO com Dr. House (3) na Ortopedia (4).
+INSERT INTO atendimento (data_hora, status, paciente_id_pessoa, recepcionista_id_pessoa, departamento_id_departamento, profissional_id_pessoa, motivo)
+VALUES ('2025-11-17 14:00:00', 'FINALIZADO', 8, 1, 4, 3, 'Paciente com a perna quebrada');
 INSERT INTO atendimento (data_hora, status, paciente_id_pessoa, recepcionista_id_pessoa, departamento_id_departamento, profissional_id_pessoa, motivo)
 VALUES ('2025-11-17 14:00:00', 'FINALIZADO', 8, 1, 4, 3, 'Paciente com a perna quebrada');
 

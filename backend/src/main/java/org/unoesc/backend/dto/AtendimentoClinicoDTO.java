@@ -1,4 +1,14 @@
 package org.unoesc.backend.dto;
-
-public class AtendimentoClinicoDTO {
-}
+ 
+import java.time.LocalDate;
+ 
+public record AtendimentoClinicoDTO(
+    Long idAtendimento,
+    String status,
+    Long idPaciente,
+    String nomePaciente,
+    String cpf,
+    Integer idade,
+    LocalDate dataNascimento,
+    String motivo
+) {}
