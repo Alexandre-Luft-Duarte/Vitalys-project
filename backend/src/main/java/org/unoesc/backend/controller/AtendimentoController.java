@@ -106,17 +106,6 @@ public class AtendimentoController {
     }
 
     /**
-     * Buscar Atendimento por ID
-     * Necessário para o frontend descobrir qual é o Paciente vinculado a este atendimento.
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<Atendimento> buscarAtendimento(@PathVariable Long id) {
-        return atendimentoRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    /**
      * Finalizar Atendimento 
      * Muda o status para "FINALIZADO".
      */

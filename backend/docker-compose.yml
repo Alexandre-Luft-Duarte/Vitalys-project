@@ -16,7 +16,7 @@ services:
     # 3. Mapeamento da porta
     # Expõe a porta 5432 do contêiner para a porta 5432 da sua máquina
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
     # 4. O Volume para persistir os dados
     volumes:

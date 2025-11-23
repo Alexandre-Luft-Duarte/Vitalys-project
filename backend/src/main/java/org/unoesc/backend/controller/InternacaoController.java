@@ -104,6 +104,15 @@ public class InternacaoController {
     }
 
     /**
+     * Endpoint para listar todas as internações ativas
+     */
+    @GetMapping
+    public ResponseEntity<List<Internacao>> listarInternacoes() {
+        List<Internacao> internacoes = internacaoRepository.findAll();
+        return ResponseEntity.ok(internacoes);
+    }
+
+    /**
      * Endpoint para ver o histórico de internações de um paciente
      */
     @GetMapping("/paciente/{pacienteId}")
