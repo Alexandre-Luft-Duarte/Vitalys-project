@@ -31,11 +31,9 @@ O sistema foca na experiência do usuário, oferecendo interfaces intuitivas par
 - **RF-002:** O usuário deve poder realizar logout do sistema.
 
 #### 📝 Categoria: Cadastros Essenciais
-*(Referente ao Módulo 1 do README)*
 - **RF-003:** O Recepcionista deve poder cadastrar, consultar e editar informações de Pacientes (dados completos, contatos, endereços).
 
 #### 🩺 Categoria: Atendimentos e Internações
-*(Referente ao Módulo 2 do README)*
 - **RF-004:** O Recepcionista deve poder registrar um novo Atendimento, associando um Paciente, um Departamento e (opcionalmente) um Profissional de Saúde.
 - **RF-005:** O Profissional de Saúde deve poder visualizar a fila de pacientes aguardando atendimento em seu departamento.
 - **RF-006:** O Profissional de Saúde deve poder iniciar um Atendimento (mudança de status de `Aguardando` para `Em Atendimento`).
@@ -43,13 +41,11 @@ O sistema foca na experiência do usuário, oferecendo interfaces intuitivas par
 - **RF-008:** O Profissional de Saúde deve poder registrar a alta médica de um paciente, finalizando a Internação.
 
 #### 📂 Categoria: Histórico Clínico Integrado
-*(Referente ao Módulo 3 do README)*
 - **RF-010:** O Profissional de Saúde deve, durante um atendimento, poder visualizar o histórico completo de atendimentos e internações do paciente.
 - **RF-011:** O Profissional de Saúde deve poder registrar Anotações Médicas (evolução, anamnese) no atendimento atual.
 - **RF-012:** O Profissional de Saúde deve poder finalizar um Atendimento.
 
 #### 📊 Categoria: Relatórios Estratégicos
-*(Referente ao Módulo 4 do README)*
 - **RF-013:** O Profissional deve poder gerar o **"Relatório de Pacientes Ativos"** (conforme Consulta 1).
 - **RF-014:** O Profissional de Saúde deve poder gerar o **"Relatório de Atendimentos de um Paciente"** (conforme Consulta 2).
 - **RF-015:** O Gestor deve poder gerar o **"Relatório de Atendimentos por Profissional de Saúde"** (conforme Consulta 3).
@@ -60,7 +56,6 @@ O sistema foca na experiência do usuário, oferecendo interfaces intuitivas par
 ### ⚙️ Requisitos Não Funcionais
 
 #### 💻 Categoria: Técnicos
-*(Enunciado PII e BDII)*
 - **RNF-001:** O sistema deve ser desenvolvido na linguagem **Java**, aplicando conceitos de POO (encapsulamento, herança, polimorfismo).
 - **RNF-002:** O sistema deve utilizar **PostgreSQL** como SGBD.
 - **RNF-003:** O sistema deve garantir a persistência dos dados.
@@ -69,7 +64,6 @@ O sistema foca na experiência do usuário, oferecendo interfaces intuitivas par
 - **RNF-006:** O banco de dados deve utilizar **views** para simplificar as consultas dos relatórios.
 
 #### 🏗️ Categoria: Desenvolvimento
-*(Enunciado ESI e PII)*
 - **RNF-007:** Todo o código-fonte deve ser versionado utilizando **Git** e hospedado no **GitHub**.
 - **RNF-008:** O código Java deve ser documentado utilizando **JavaDOC**.
 - **RNF-009:** O código deve seguir as convenções de nomenclatura do Java (clareza e legibilidade).
