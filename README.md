@@ -13,6 +13,89 @@ O **Vitalys** é um sistema completo de gestão hospitalar. O objetivo é inform
 O sistema foca na experiência do usuário, oferecendo interfaces intuitivas para médicos e recepcionistas, garantindo integridade de dados e agilidade no fluxo hospitalar.
 
 ---
+## Requisitos do Sistema
+
+🏷️ Atores
+
+P-01: Recepcionista (Administrativo)
+
+Descrição: Responsável pelo "front desk". Cadastra pacientes, gerencia contatos/endereços e registra a entrada do paciente no hospital (criação do atendimento).
+
+P-03: Profissional de Saúde (Médico/Enfermeiro)
+
+Descrição: Responsável pelo cuidado assistencial. Realiza atendimentos, consulta históricos, solicita exames, prescreve medicamentos e gerencia internações.
+
+📌 Requisitos Funcionais
+Categoria: Gestão de Acesso e Usuários
+
+RF-001: O sistema deve permitir que um usuário (Recepcionista, Profissional) autentique-se usando e-mail e senha.
+
+RF-002: O usuário deve poder realizar logout do sistema.
+
+Categoria: Cadastros Essenciais (Módulo 1 do README)
+
+RF-003: O Recepcionista deve poder cadastrar, consultar e editar informações de Pacientes (dados completos, contatos, endereços).
+
+Categoria: Atendimentos e Internações (Módulo 2 do README)
+
+RF-004: O Recepcionista deve poder registrar um novo Atendimento, associando um Paciente, um Departamento e (opcionalmente) um Profissional de Saúde.
+
+RF-005: O Profissional de Saúde deve poder visualizar a fila de pacientes aguardando atendimento em seu departamento.
+
+RF-006: O Profissional de Saúde deve poder iniciar um Atendimento (mudar status de "Aguardando" para "Em Atendimento").
+
+RF-007: O Profissional de Saúde deve poder solicitar uma Internação para um Paciente durante um atendimento caso necessário.
+
+RF-008: O Profissional de Saúde deve poder registrar a alta médica de um paciente, finalizando a Internação.
+
+Categoria: Histórico Clínico Integrado (Módulo 3 do README)
+
+RF-010: O Profissional de Saúde deve, durante um atendimento, poder visualizar o histórico completo de atendimentos e internações do paciente.
+
+RF-011: O Profissional de Saúde deve poder registrar Anotações Médicas (evolução, anamnese) no atendimento atual.
+
+RF-012: O Profissional de Saúde deve poder finalizar um Atendimento.
+
+Categoria: Relatórios Estratégicos (Módulo 4 do README)
+
+RF-013: O Profissional deve poder gerar o "Relatório de Pacientes Ativos" (conforme Consulta 1 do README).
+
+RF-014: O Profissional de Saúde deve poder gerar o "Relatório de Atendimentos de um Paciente" (conforme Consulta 2 do README).
+
+RF-015: O Gestor deve poder gerar o "Relatório de Atendimentos por Profissional de Saúde" (conforme Consulta 3 do README).
+
+RF-016: O Gestor deve poder gerar o "Relatório Resumido de Atendimentos por Departamento" (conforme Consulta 4 do README).
+
+⚙️ Requisitos Não Funcionais
+Categoria: Técnicos (Enunciado PII e BDII)
+
+RNF-001: O sistema deve ser desenvolvido na linguagem Java, aplicando conceitos de POO (encapsulamento, herança, polimorfismo).
+
+RNF-002: O sistema deve utilizar PostgreSQL como SGBD.
+
+RNF-003: O sistema deve garantir a persistência dos dados.
+
+RNF-004: O banco de dados deve implementar triggers para controle de integridade ou auditoria (ex: registrar mudança de status do leito).
+
+RNF-005: O banco de dados deve implementar stored procedures (funções) para regras de negócio (ex: função para dar alta em um paciente).
+
+RNF-006: O banco de dados deve utilizar views para simplificar as consultas dos relatórios.
+
+Categoria: Desenvolvimento (Enunciado ESI e PII)
+
+RNF-007: Todo o código-fonte deve ser versionado utilizando Git e hospedado no GitHub.
+
+RNF-008: O código Java deve ser documentado utilizando JavaDOC.
+
+RNF-009: O código deve seguir as convenções de nomenclatura do Java (clareza e legibilidade).
+
+Categoria: Segurança e Desempenho
+
+RNF-010: O sistema deve garantir que dados sensíveis do paciente (CPF, histórico clínico) não sejam acessíveis por usuários não autorizados.
+
+RNF-011: As consultas ao histórico do paciente (RF-010) devem ser executadas em menos de 3 segundos.
+
+---
 
 ## ✨ Funcionalidades Principais
 
