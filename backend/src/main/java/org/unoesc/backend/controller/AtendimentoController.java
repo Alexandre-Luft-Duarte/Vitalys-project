@@ -19,9 +19,21 @@ import org.springframework.web.bind.annotation.RequestBody; // Importa todos os 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import org.unoesc.backend.dto.*;
-import org.unoesc.backend.model.*;
-import org.unoesc.backend.repository.*;
+import org.unoesc.backend.dto.AnotacaoRequestDTO;
+import org.unoesc.backend.dto.AtendimentoClinicoDTO;
+import org.unoesc.backend.dto.AtendimentoRequestDTO;
+import org.unoesc.backend.dto.FilaAtendimentosDTO;
+import org.unoesc.backend.model.AnotacaoMedica;
+import org.unoesc.backend.model.Atendimento;
+import org.unoesc.backend.model.Departamento;
+import org.unoesc.backend.model.Paciente;
+import org.unoesc.backend.model.Profissional;
+import org.unoesc.backend.model.StatusAtendimento;
+import org.unoesc.backend.repository.AnotacaoMedicaRepository;
+import org.unoesc.backend.repository.AtendimentoRepository;
+import org.unoesc.backend.repository.DepartamentoRepository;
+import org.unoesc.backend.repository.PacienteRepository;
+import org.unoesc.backend.repository.ProfissionalRepository;
 
 @RestController
 @RequestMapping("/api/atendimentos")
@@ -100,7 +112,7 @@ public class AtendimentoController {
         Atendimento atendimento = atendimentoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Atendimento não encontrado"));
 
-        atendimento.setStatus(StatusAtendimento.EM_ATENDIMENTO); // Muda o status [cite: 126]
+        atendimento.setStatus(StatusAtendimento.EM_ATENDIMENTO);
         Atendimento atendimentoAtualizado = atendimentoRepository.save(atendimento);
         return ResponseEntity.ok(atendimentoAtualizado);
     }
@@ -129,10 +141,10 @@ public class AtendimentoController {
             @RequestBody AnotacaoRequestDTO request) {
 
         Atendimento atendimento = atendimentoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Atendimento não encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Atendimento não encontrado"));
 
         Profissional profissional = profissionalRepository.findById(request.profissionalId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profissional não encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Profissional não encontrado"));
 
         AnotacaoMedica novaAnotacao = new AnotacaoMedica();
         novaAnotacao.setTextoAnotacao(request.textoAnotacao());
@@ -183,7 +195,8 @@ public class AtendimentoController {
                     p.getNomeCompleto(),         // 4. String nomePaciente
                     p.getCpf(),                  // 5. String cpf
                     idade,                       // 6. Integer idade
-                    p.getDataNascimento()        // 7. LocalDate dataNascimento
+                    p.getDataNascimento(),
+                    at.getProfissional().getIdPessoa()        // 7. LocalDate dataNascimento
             );
 
             return ResponseEntity.ok(dto);

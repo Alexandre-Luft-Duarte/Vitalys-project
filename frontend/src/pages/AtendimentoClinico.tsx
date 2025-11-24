@@ -91,9 +91,45 @@ const AtendimentoClinico = () => {
         carregarDados();
     }, [id, toast]);
 
-    const handleSolicitarInternacao = () => {
-        setModalInternacaoOpen(true);
+    const handleSalvarAnamnese = async () => {
+        if (!id || !anamnese.trim()) {
+            toast({ title: "Atenção", description: "O campo não pode estar vazio.", variant: "destructive" });
+            return;
+        }
+
+        try {
+            // ID do profissional fixo em 1 para teste (ou pegue do login se tiver)
+            const profissionalId = 1; 
+
+            const response = await fetch(`http://localhost:8080/api/atendimentos/${id}/anotacoes`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    profissionalId: profissionalId,
+                    textoAnotacao: `Anamnese: ${anamnese}` // Prefixo para identificar no banco
+                })
+            });
+
+            if (!response.ok) throw new Error("Erro ao salvar");
+
+            toast({
+                title: "Sucesso",
+                description: "Anamnese salva na tabela de Anotações Médicas.",
+                variant: "default" // ou className="bg-green-500"
+            });
+            
+            // Opcional: Limpar campo ou manter
+            // setAnamnese(""); 
+
+        } catch (error) {
+            console.error(error);
+            toast({ title: "Erro", description: "Falha ao salvar anotação.", variant: "destructive" });
+        }
     };
+
+    // const handleSolicitarInternacao = () => {
+    //     setModalInternacaoOpen(true);
+    // };
 
     const handleFinalizarAtendimento = () => {
         if (!anamnese && !evolucao && !prescricao && !exames) {
@@ -313,6 +349,15 @@ const AtendimentoClinico = () => {
                                             onChange={(e) => setAnamnese(e.target.value)}
                                             className="min-h-[400px] resize-none text-sm"
                                         />
+                                        
+                                        <div className="flex justify-end">
+                                            <Button 
+                                                onClick={handleSalvarAnamnese}
+                                                className="bg-primary hover:bg-primary/90 text-white font-bold"
+                                            >
+                                                Salvar Anamnese
+                                            </Button>
+                                        </div>
                                     </div>
                                 </TabsContent>
 
