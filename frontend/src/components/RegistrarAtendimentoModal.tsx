@@ -62,9 +62,10 @@ const RegistrarAtendimentoModal = ({
     const onSubmit = async (data: AtendimentoFormData) => {
         setIsSubmitting(true);
         const idDepartamento = departamentos?.find((dept: any) => dept.nome = data.departamento)?.idDepartamento;
-
+        const recepcionistaId = window.localStorage.getItem("idUsuario");
 
         const payload = {
+            recepcionistaId,
             pacienteId,
             departamentoId: idDepartamento,
             motivo: data.motivoVisita
@@ -97,24 +98,6 @@ const RegistrarAtendimentoModal = ({
         setIsSubmitting(false);
         reset();
         onOpenChange(false);
-
-        // Simular registro de atendimento
-        // setTimeout(() => {
-        //     console.log("Atendimento registrado:", {
-        //         pacienteId,
-        //         pacienteNome,
-        //         ...data,
-        //     });
-        //
-        //     toast({
-        //         title: "Atendimento registrado!",
-        //         description: `${pacienteNome} foi encaminhado para ${data.departamento}.`,
-        //     });
-        //
-        //     setIsSubmitting(false);
-        //     reset();
-        //     onOpenChange(false);
-        // }, 1000);
     };
 
     const handleCancel = () => {

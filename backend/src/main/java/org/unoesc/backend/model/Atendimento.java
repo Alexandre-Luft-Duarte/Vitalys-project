@@ -127,4 +127,12 @@ public class Atendimento {
     public void setAnotacoesMedicas(List<AnotacaoMedica> anotacoesMedicas) {
         this.anotacoesMedicas = anotacoesMedicas;
     }
+
+    public Recepcionista getRecepcionista() {
+        return recepcionista;
+    }
+
+    public void setRecepcionista(Recepcionista recepcionista) {
+        this.recepcionista = recepcionista;
+    }
 }

@@ -5,6 +5,7 @@ package org.unoesc.backend.dto;
 public record AtendimentoRequestDTO(
         Long pacienteId,
         Long departamentoId,
-        Long profissionalId,  // Pode ser nulo, conforme RF-004
+        Long profissionalId,
+        Long recepcionistaId,// Pode ser nulo, conforme RF-004
         String motivo
 ) {}

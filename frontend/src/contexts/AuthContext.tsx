@@ -30,6 +30,7 @@ export function AuthContext({ children } : { children: React.ReactNode }) {
         window.localStorage.setItem("nome", data.nome);
         window.localStorage.setItem("token", data.token);
         window.localStorage.setItem("tipoUsuario", data.tipoUsuario);
+        window.localStorage.setItem("idUsuario", data.id);
         setIsAuthenticated(true);
         return data;
     }
@@ -55,6 +56,7 @@ export function AuthContext({ children } : { children: React.ReactNode }) {
         window.localStorage.removeItem("token");
         window.localStorage.removeItem("nome");
         window.localStorage.removeItem("tipoUsuario");
+        window.localStorage.removeItem("idUsuario");
     }
 
     useEffect(() => {

@@ -32,8 +32,7 @@ const Dashboard = () => {
     const tipoUsuario = localStorage.getItem("tipoUsuario");
 
     const handleNovoPaciente = () => {
-        // navigator("/cadastro-paciente");
-        navigator("/dashboard-profissional");
+        navigator("/cadastro-paciente");
     };
 
     const handleSelecionarPaciente = (id: number, nome: string) => {

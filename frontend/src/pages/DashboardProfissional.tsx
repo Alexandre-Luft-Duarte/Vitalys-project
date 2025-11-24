@@ -35,8 +35,6 @@ const DashboardProfissional = () => {
     const [pacientes, setPacientes] = useState<Paciente[]>([]);
     const navigate = useNavigate();
     const { toast } = useToast();
-    const profissionalNome = "Dr. Roberto Almeida";
-    const departamento = "Clínica Geral";
     const [loading, setLoading] = useState(true);
     const tipoUsuario = window.localStorage.getItem("tipoUsuario");
 
@@ -83,8 +81,11 @@ const DashboardProfissional = () => {
 
     const handleChamarPaciente = async (id: number) => {
         // Chama o endpoint que muda o status para EM_ATENDIMENTO
+        const idUsuario = window.localStorage.getItem("idUsuario");
         const response = await fetch(`http://localhost:8080/api/atendimentos/${id}/iniciar`, {
-            method: "PUT"
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idProfissional: idUsuario }),
         });
 
         if (!response.ok) {

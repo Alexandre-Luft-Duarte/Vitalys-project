@@ -23,15 +23,6 @@ import { useToast } from "../hooks/use-toast.ts";
 import SolicitarInternacaoModal from "../components/SolicitarInternacaoModal.tsx";
 import RegistrarAltaMedicaModal from "../components/RegistrarAltaMedica.tsx";
 
-interface AtendimentoData {
-    idAtendimento: number;
-    status: string;
-    motivo: string; // ou motivoQueixa dependendo do seu backend
-    paciente: {
-        idPessoa: number; // Precisamos disso para chamar a outra API
-    };
-}
-
 // Interface para os dados vindos do PacienteController
 interface PacienteData {
     idPessoa: number;
@@ -65,14 +56,16 @@ const AtendimentoClinico = () => {
                 // 1. Busca o Atendimento para pegar o ID do Paciente
                 const respAtendimento = await fetch(`http://localhost:8080/api/atendimentos/${id}`);
                 if (!respAtendimento.ok) throw new Error("Erro ao buscar atendimento");
-                const dadosAtendimento: AtendimentoData = await respAtendimento.json();
+                const dadosAtendimento = await respAtendimento.json();
+                console.log("dadosAtendimento", dadosAtendimento);
                 setAtendimento(dadosAtendimento);
 
                 // 2. Com o ID do Paciente, busca os dados detalhados no PacienteController
-                if (dadosAtendimento.paciente && dadosAtendimento.paciente.idPessoa) {
-                    const respPaciente = await fetch(`http://localhost:8080/api/pacientes/${dadosAtendimento.paciente.idPessoa}`);
+                if (dadosAtendimento.idPessoa) {
+                    const respPaciente = await fetch(`http://localhost:8080/api/pacientes/${dadosAtendimento.idPessoa}`);
                     if (!respPaciente.ok) throw new Error("Erro ao buscar paciente");
                     const dadosPaciente: PacienteData = await respPaciente.json();
+                    console.log("dadosPaciente", dadosPaciente);
                     setPaciente(dadosPaciente);
                 }
 
@@ -299,19 +292,8 @@ const AtendimentoClinico = () => {
                             <div>
                                 <div className="flex items-center gap-2 mb-2">
                                     <AlertCircle className="h-4 w-4 text-destructive" />
-                                    <p className="text-xs font-semibold text-destructive">Alergias</p>
+                                    <p className="text-xs font-semibold text-destructive">{paciente.descricaoMedica}</p>
                                 </div>
-                                {/* <div className="flex flex-wrap gap-2">
-                                    {pacienteAtual.alergias.map((alergia, index) => (
-                                        <Badge
-                                            key={index}
-                                            variant="outline"
-                                            className="bg-destructive/10 text-destructive border-destructive/30 text-xs"
-                                        >
-                                            {alergia}
-                                        </Badge>
-                                    ))}
-                                </div> */}
                             </div>
                             
                         </CardContent>
@@ -332,16 +314,10 @@ const AtendimentoClinico = () => {
                         </CardHeader>
                         <CardContent className="pt-6">
                             <Tabs defaultValue="anamnese" className="w-full">
-                                <TabsList className="grid w-full grid-cols-4 mb-6">
-                                    <TabsTrigger value="anamnese" className="text-sm">
-                                        Anamnese
-                                    </TabsTrigger>
-                                </TabsList>
-
                                 <TabsContent value="anamnese" className="space-y-4">
                                     <div>
                                         <h3 className="text-sm font-semibold text-foreground mb-2">
-                                            História da Doença Atual
+                                            Adicione uma anotação médica:
                                         </h3>
                                         <Textarea
                                             placeholder="Descreva a história da doença atual, sintomas principais, duração, evolução..."
@@ -350,12 +326,12 @@ const AtendimentoClinico = () => {
                                             className="min-h-[400px] resize-none text-sm"
                                         />
                                         
-                                        <div className="flex justify-end">
+                                        <div className="flex justify-end py-4">
                                             <Button 
                                                 onClick={handleSalvarAnamnese}
                                                 className="bg-primary hover:bg-primary/90 text-white font-bold"
                                             >
-                                                Salvar Anamnese
+                                                Adicionar anotação
                                             </Button>
                                         </div>
                                     </div>

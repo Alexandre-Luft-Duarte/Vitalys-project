@@ -46,6 +46,7 @@ public class AtendimentoController {
     @Autowired private DepartamentoRepository departamentoRepository;
     @Autowired private ProfissionalRepository profissionalRepository;
     @Autowired private AnotacaoMedicaRepository anotacaoMedicaRepository;
+    @Autowired private RecepcionistaRepository recepcionistaRepository;
 
     /**
      *  Registrar Entrada de Paciente
@@ -67,11 +68,18 @@ public class AtendimentoController {
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profissional não encontrado"));
         }
 
+        Recepcionista recepcionista = null;
+        if (request.recepcionistaId() != null) { // Profissional é opcional [cite: 163]
+            recepcionista = recepcionistaRepository.findById(request.recepcionistaId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Recepcionista não encontrado"));
+        }
+
         // 2. Criar o novo objeto Atendimento
         Atendimento novoAtendimento = new Atendimento();
         novoAtendimento.setPaciente(paciente);
         novoAtendimento.setDepartamento(departamento);
-        novoAtendimento.setProfissional(profissional); // Pode ser null
+        novoAtendimento.setProfissional(profissional);
+        novoAtendimento.setRecepcionista(recepcionista);// Pode ser null
         novoAtendimento.setMotivo(request.motivo());  // Pode ser null
         novoAtendimento.setDataHora(LocalDateTime.now());
         novoAtendimento.setStatus(StatusAtendimento.AGUARDANDO); // Status inicial [cite: 171]
@@ -108,11 +116,15 @@ public class AtendimentoController {
     //  * Muda o status de "AGUARDANDO" para "EM_ATENDIMENTO".
     //  */
     @PutMapping("/{id}/iniciar")
-    public ResponseEntity<Atendimento> iniciarAtendimento(@PathVariable Long id) {
+    public ResponseEntity<Atendimento> iniciarAtendimento(@PathVariable Long id, @RequestBody IniciarAtendimentoDTO request) {
         Atendimento atendimento = atendimentoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Atendimento não encontrado"));
 
         atendimento.setStatus(StatusAtendimento.EM_ATENDIMENTO);
+        Profissional pro = profissionalRepository.findById(request.idProfissional())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profissional não encontrado"));
+
+        atendimento.setProfissional(pro);
         Atendimento atendimentoAtualizado = atendimentoRepository.save(atendimento);
         return ResponseEntity.ok(atendimentoAtualizado);
     }
@@ -196,7 +208,7 @@ public class AtendimentoController {
                     p.getCpf(),                  // 5. String cpf
                     idade,                       // 6. Integer idade
                     p.getDataNascimento(),
-                    at.getProfissional().getIdPessoa()        // 7. LocalDate dataNascimento
+                    at.getProfissional().getIdPessoa()// 7. LocalDate dataNascimento
             );
 
             return ResponseEntity.ok(dto);
