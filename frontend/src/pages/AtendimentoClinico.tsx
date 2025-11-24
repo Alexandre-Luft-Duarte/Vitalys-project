@@ -55,7 +55,9 @@ const AtendimentoClinico = () => {
     const [paciente, setPaciente] = useState<PacienteData | null>(null);
     const [loading, setLoading] = useState(true);
 
+
     useEffect(() => {
+        console.log("idpoha", id);
         if (!id) return;
 
         const carregarDados = async () => {
@@ -89,34 +91,34 @@ const AtendimentoClinico = () => {
         carregarDados();
     }, [id, toast]);
 
-    // const handleSolicitarInternacao = () => {
-    //     setModalInternacaoOpen(true);
-    // };
+    const handleSolicitarInternacao = () => {
+        setModalInternacaoOpen(true);
+    };
 
-    // const handleFinalizarAtendimento = () => {
-    //     if (!anamnese && !evolucao && !prescricao && !exames) {
-    //         toast({
-    //             title: "Atenção",
-    //             description: "Preencha ao menos uma seção antes de finalizar.",
-    //             variant: "destructive",
-    //         });
-    //         return;
-    //     }
+    const handleFinalizarAtendimento = () => {
+        if (!anamnese && !evolucao && !prescricao && !exames) {
+            toast({
+                title: "Atenção",
+                description: "Preencha ao menos uma seção antes de finalizar.",
+                variant: "destructive",
+            });
+            return;
+        }
 
-    //     // Abrir modal de alta médica
-    //     setModalAltaMedicaOpen(true);
-    // };
+        // Abrir modal de alta médica
+        setModalAltaMedicaOpen(true);
+    };
 
-    // const handleConfirmarAlta = () => {
-    //     toast({
-    //         title: "Atendimento Finalizado",
-    //         description: `Atendimento de ${pacienteAtual.nome} registrado com sucesso.`,
-    //     });
+    const handleConfirmarAlta = () => {
+        toast({
+            title: "Atendimento Finalizado",
+            description: `Atendimento de ${pacienteAtual.nome} registrado com sucesso.`,
+        });
 
-    //     setTimeout(() => {
-    //         navigate("/dashboard-profissional");
-    //     }, 1500);
-    // };
+        setTimeout(() => {
+            navigate("/dashboard-profissional");
+        }, 1500);
+    };
 
     const getTipoIcon = (tipo: string) => {
         switch (tipo) {

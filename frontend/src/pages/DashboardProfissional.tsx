@@ -83,36 +83,34 @@ const DashboardProfissional = () => {
     };
 
     const handleChamarPaciente = async (id: number) => {
-        try {
-            // Chama o endpoint que muda o status para EM_ATENDIMENTO
-            const response = await fetch(`http://localhost:8080/api/paciente/${id}/inicar`, {
-                method: "PUT"
-            });
+        // Chama o endpoint que muda o status para EM_ATENDIMENTO
+        const response = await fetch(`http://localhost:8080/api/atendimentos/${id}/iniciar`, {
+            method: "PUT"
+        });
 
-            if (!response.ok) throw new Error("Erro ao iniciar atendimento");
-
-            toast({
-                title: "Atendimento Iniciado",
-                description: "Direcionando para o prontuário...",
-            });
-
-            // Atualiza a lista localmente para feedback visual imediato
-            setPacientes((prev) =>
-                prev.map((p) => p.id === id ? { ...p, status: "Em Atendimento" } : p)
-            );
-
-            // Navega passando o ID real do atendimento
-            setTimeout(() => {
-                navigate(`/atendimento-clinico/${id}`); // <--- IMPORTANTE: Passar o ID na URL
-            }, 1000);
-
-        } catch (error) {
+        if (!response.ok) {
             toast({
                 title: "Erro",
                 description: "Não foi possível iniciar o atendimento.",
                 variant: "destructive",
             });
+            return
         }
+
+        toast({
+            title: "Atendimento Iniciado",
+            description: "Direcionando para o prontuário...",
+        });
+
+        // Atualiza a lista localmente para feedback visual imediato
+        setPacientes((prev) =>
+            prev.map((p) => p.id === id ? { ...p, status: "Em Atendimento" } : p)
+        );
+
+        // Navega passando o ID real do atendimento
+        setTimeout(() => {
+            navigate(`/atendimento-clinico/${id}`); // <--- IMPORTANTE: Passar o ID na URL
+        }, 1000);
     };
 
     const handleLogout = () => {
@@ -149,52 +147,6 @@ const DashboardProfissional = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
-            {/* Cabeçalho */}
-            {/*<header className="bg-card border-b border-border shadow-sm">*/}
-            {/*    <div className="container mx-auto px-6 py-4">*/}
-            {/*        <div className="flex items-center justify-between">*/}
-            {/*            <div className="flex items-center gap-4">*/}
-            {/*                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">*/}
-            {/*                    <ClipboardList className="h-6 w-6 text-primary" />*/}
-            {/*                </div>*/}
-            {/*                <div>*/}
-            {/*                    <h1 className="text-xl font-bold text-foreground">*/}
-            {/*                        Fila de Atendimento - {departamento}*/}
-            {/*                    </h1>*/}
-            {/*                    <p className="text-sm text-muted-foreground">*/}
-            {/*                        {pacientesAguardando} aguardando • {pacientesEmAtendimento} em atendimento*/}
-            {/*                    </p>*/}
-            {/*                </div>*/}
-            {/*            </div>*/}
-
-            {/*            <div className="flex items-center gap-4">*/}
-            {/*                <Button*/}
-            {/*                    variant="outline"*/}
-            {/*                    size="sm"*/}
-            {/*                    onClick={() => navigate("/pacientes-internados")}*/}
-            {/*                    className="border-primary/20 hover:bg-primary/10"*/}
-            {/*                >*/}
-            {/*                    Ver Pacientes Internados*/}
-            {/*                </Button>*/}
-            {/*                <div className="flex items-center gap-2 text-sm">*/}
-            {/*                    <UserCircle className="h-5 w-5 text-muted-foreground" />*/}
-            {/*                    <span className="font-medium text-foreground">{profissionalNome}</span>*/}
-            {/*                </div>*/}
-            {/*                <Button*/}
-            {/*                    variant="ghost"*/}
-            {/*                    size="sm"*/}
-            {/*                    onClick={handleLogout}*/}
-            {/*                    className="text-muted-foreground hover:text-destructive"*/}
-            {/*                >*/}
-            {/*                    <LogOut className="h-4 w-4" />*/}
-            {/*                </Button>*/}
-            {/*            </div>*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*</header> */}
-
-
-
             {/* Conteúdo Principal */}
             <main className="container mx-auto px-6 py-8">
 
@@ -202,8 +154,7 @@ const DashboardProfissional = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
                         <Button
                             size="lg"
-                            // onClick={() => navigate("/pacientes-internados")}
-                            onClick={() => navigate("/atendimento-clinico")}
+                            onClick={() => navigate("/pacientes-internados")}
                             className="h-20 text-lg font-semibold bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity shadow-md"
                         >
                             <ClipboardPlus className="h-6 w-6 mr-3" />
@@ -221,14 +172,6 @@ const DashboardProfissional = () => {
                         <p className="text-sm text-primary-foreground/80 mt-1">
                             Gerencie seus atendimentos de forma eficiente
                         </p>
-                        <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => navigate("/pacientes-internados")}
-                                className="border-primary/20 hover:bg-primary/10"
-                            >
-                                Ver Pacientes Internados
-                        </Button>
                     </div>
 
                     {/* Tabela de Pacientes */}

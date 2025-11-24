@@ -47,12 +47,14 @@ interface EvolucaoInternacaoModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     internacao: InternacaoData | null; // Agora aceita null para facilitar a tipagem no pai
+    onUpdate: Function,
 }
 
 const EvolucaoInternacaoModal = ({
     open,
     onOpenChange,
     internacao,
+    onUpdate
 }: EvolucaoInternacaoModalProps) => {
     const { toast } = useToast();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -110,6 +112,7 @@ const EvolucaoInternacaoModal = ({
         setIsSubmitting(false);
         reset();
         onOpenChange(false);
+        onUpdate();
     };
 
     const handleAltaMedica = async () => {
@@ -138,6 +141,7 @@ const EvolucaoInternacaoModal = ({
         setIsSubmitting(false);
         reset();
         onOpenChange(false);
+        onUpdate();
     };
 
     const handleCancel = () => {

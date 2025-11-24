@@ -7,6 +7,15 @@ export default function HeaderNav() {
     const {logout, nome} = useAuth();
     const navigator = useNavigate();
 
+    function redirectUserToDashBoard() {
+        const tipoUsuario = window.localStorage.getItem("tipoUsuario")
+        if (tipoUsuario === "PROFISSIONAL") {
+            navigator("/dashboard-profissional");
+        } else {
+            navigator("/dashboard");
+        }
+    }
+
     return (
         <header className="bg-card border-b border-border shadow-sm">
             <div className="container mx-auto px-6 py-4">
@@ -20,7 +29,7 @@ export default function HeaderNav() {
                         <nav className="flex gap-6">
                             <button
                                 className="text-foreground font-medium hover:text-primary transition-colors"
-                                onClick={() => navigator("/dashboard")}
+                                onClick={() => redirectUserToDashBoard()}
                             >
                                 Dashboard
                             </button>

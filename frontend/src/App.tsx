@@ -18,6 +18,8 @@ import {AuthContext} from "./contexts/AuthContext.tsx";
 import BuscarPaciente from "./pages/BuscarPaciente.tsx";
 
 const queryClient = new QueryClient();
+const tipoUsuario = window.localStorage.getItem("tipoUsuario");
+console.log(tipoUsuario);
 
 const App = () => (
         <QueryClientProvider client={queryClient}>
@@ -37,7 +39,12 @@ const App = () => (
                             <Route path="/atendimento-clinico/:id" element={<AtendimentoClinico />} />
                             <Route path="/cadastro-paciente" element={<CadastroPaciente />} />
                             <Route path="/pacientes-internados" element={<PacientesInternados />} />
-                            <Route path="/" element={<Navigate to={"/dashboard"} />} />
+                            <Route path="/" element={
+                                tipoUsuario === "PROFISSIONAL" ? 
+                                    <Navigate to={"/dashboard-profissional"} /> : 
+                                    <Navigate to={"/dashboard"} />
+                                } 
+                            />
                         </Route>
                     </Routes>
                 </AuthContext>

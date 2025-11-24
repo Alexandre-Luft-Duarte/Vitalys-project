@@ -29,7 +29,7 @@ const PacientesInternados = () => {
     // Busca dados do backend
     async function getPacientesInternados() {
         try {
-            const response = await fetch('http://localhost:8080/api/internacoes');
+            const response = await fetch('http://localhost:8080/api/internacoes/ativas');
             if (!response.ok) throw new Error("Falha na requisição");
             
             const data = await response.json();
