@@ -81,8 +81,9 @@ VITALYS/
 │   └── vite.config.ts      # Configuração do Build
 │
 └── 📂 integrantes/       # Fotos da equipe
+```
 
-## 🗄️ Modelagem de Dados
+## 🗄️ MODELAGEM DE DADOS
 
 O banco de dados foi projetado utilizando a estratégia de herança **JOINED** (Tabela por Subclasse), garantindo alta normalização e integridade dos dados sem repetição de informações.
 
@@ -91,7 +92,9 @@ O banco de dados foi projetado utilizando a estratégia de herança **JOINED** (
 * **`Profissional` / `Recepcionista`:** Estendem *Usuario*, herdando tanto os dados pessoais quanto os de login.
 * **`Paciente`:** Estende *Pessoa* diretamente, isolando os dados clínicos (ex: `descricao_medica`) dos dados de acesso ao sistema.
 
-## 🚀 Como Executar o Projeto
+---
+
+## 🚀 COMO EXECUTAR O PROJETO
 
 ### Pré-requisitos
 Antes de começar, certifique-se de ter instalado em sua máquina:
@@ -114,15 +117,19 @@ Abra o terminal na pasta `backend` e execute:
 cd backend
 # Caso necessário, ajuste o arquivo application.properties com seu usuário/senha do banco
 ./mvnw spring-boot:run
+```
 
 #### 2. Executando o Frotend
 Abra o terminal na pasta `frontend` e execute:
 
+```bash
 cd frontend
 npm install
 npm run dev
+```
 
-🔌 Documentação da API (Principais Endpoints)
+
+## 🔌 Documentação da API (Principais Endpoints)
 | Método | Endpoint | Descrição |
 | :--- | :--- | :--- |
 | `POST` | `/api/atendimentos` | Cria um novo atendimento (Recepção) |
