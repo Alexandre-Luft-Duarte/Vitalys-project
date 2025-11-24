@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import {  } from "lucide-react";
 import {useEffect, useState} from "react";
-import { useNavigate } from "react-router-dom";
+import {Navigate, useNavigate} from "react-router-dom";
 import { useToast } from "@/hooks/use-toast.ts";
 import { PacienteListagemType } from "@/lib/types.ts";
 
@@ -29,6 +29,7 @@ const Dashboard = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [pacienteSelecionado, setPacienteSelecionado] = useState<{ id: number; nome: string } | null>(null);
     const navigator = useNavigate();
+    const tipoUsuario = localStorage.getItem("tipoUsuario");
 
     const handleNovoPaciente = () => {
         // navigator("/cadastro-paciente");
@@ -77,7 +78,7 @@ const Dashboard = () => {
         buscarPacientes();
     }, [])
 
-    return (
+    return tipoUsuario === "RECEPCIONISTA" ? (
         <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
             {/* Cabeçalho */}
 
@@ -183,7 +184,7 @@ const Dashboard = () => {
                 />
             )}
         </div>
-    );
+    ) : (<Navigate to={"/dashboard-profissional"} />);
 };
 
 export default Dashboard;

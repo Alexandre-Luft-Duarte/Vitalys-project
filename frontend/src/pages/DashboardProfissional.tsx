@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import {UserCircle, LogOut, ClipboardList, UserPlus, ClipboardPlus} from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {Navigate, useNavigate} from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 interface Paciente {
@@ -38,6 +38,7 @@ const DashboardProfissional = () => {
     const profissionalNome = "Dr. Roberto Almeida";
     const departamento = "Clínica Geral";
     const [loading, setLoading] = useState(true);
+    const tipoUsuario = window.localStorage.getItem("tipoUsuario");
 
     // --- 1. BUSCAR DADOS DO BANCO ---
     const fetchAtendimentos = async () => {
@@ -81,18 +82,10 @@ const DashboardProfissional = () => {
     };
 
     const handleChamarPaciente = async (id: number) => {
-<<<<<<< HEAD
         // Chama o endpoint que muda o status para EM_ATENDIMENTO
         const response = await fetch(`http://localhost:8080/api/atendimentos/${id}/iniciar`, {
             method: "PUT"
         });
-=======
-        try {
-            // Chama o endpoint que muda o status para EM_ATENDIMENTO
-            const response = await fetch(`http://localhost:8080/api/atendimentos/${id}/iniciar`, {
-                method: "PUT"
-            });
->>>>>>> f841377b5e677a0a085945ad25887240a3cd577b
 
         if (!response.ok) {
             toast({
@@ -151,7 +144,7 @@ const DashboardProfissional = () => {
     const pacientesAguardando = pacientes.filter((p) => p.status === "Aguardando").length;
     const pacientesEmAtendimento = pacientes.filter((p) => p.status === "Em Atendimento").length;
 
-    return (
+    return tipoUsuario === "PROFISSIONAL" ? (
         <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
             {/* Conteúdo Principal */}
             <main className="container mx-auto px-6 py-8">
@@ -277,7 +270,7 @@ const DashboardProfissional = () => {
                 </div>
             </main>
         </div>
-    );
+    ) : (<Navigate to={"/dashboard"} />);
 };
 
 export default DashboardProfissional;

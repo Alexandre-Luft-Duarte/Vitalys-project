@@ -16,6 +16,7 @@ import PacientesInternados from "./pages/PacientesInternados.tsx";
 import { AuthLayout } from "./layouts/AuthLayout.tsx";
 import {AuthContext} from "./contexts/AuthContext.tsx";
 import BuscarPaciente from "./pages/BuscarPaciente.tsx";
+import {DashboardLayout} from "./layouts/DashboardLayout.tsx";
 
 const queryClient = new QueryClient();
 const tipoUsuario = window.localStorage.getItem("tipoUsuario");
@@ -39,12 +40,7 @@ const App = () => (
                             <Route path="/atendimento-clinico/:id" element={<AtendimentoClinico />} />
                             <Route path="/cadastro-paciente" element={<CadastroPaciente />} />
                             <Route path="/pacientes-internados" element={<PacientesInternados />} />
-                            <Route path="/" element={
-                                tipoUsuario === "PROFISSIONAL" ? 
-                                    <Navigate to={"/dashboard-profissional"} /> : 
-                                    <Navigate to={"/dashboard"} />
-                                } 
-                            />
+                            <Route path="/" element={<DashboardLayout/>} />
                         </Route>
                     </Routes>
                 </AuthContext>
