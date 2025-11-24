@@ -158,6 +158,10 @@ const AtendimentoClinico = () => {
         return idade;
     };
 
+    if (!atendimento || !paciente) {
+        return <div className="flex h-screen items-center justify-center">Dados não encontrados.</div>;
+    }
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
             {/* Cabeçalho */}
@@ -180,7 +184,7 @@ const AtendimentoClinico = () => {
                                     Atendimento Clínico
                                 </h1>
                                 <p className="text-sm text-muted-foreground">
-                                    {/* {atendimentoData.nomePaciente} • {atendimentoData.motivoVisita || "Consulta de Rotina"} */}
+                                    {paciente.nomeCompleto} • {atendimento.motivo || "Sem queixa registrada"}
                                 </p>
                             </div>
                         </div>
@@ -188,14 +192,14 @@ const AtendimentoClinico = () => {
                         <div className="flex items-center gap-3">
                             <Button
                                 variant="outline"
-                                onClick={handleSolicitarInternacao}
+                                // onClick={handleSolicitarInternacao}
                                 className="h-10 px-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                             >
                                 <ClipboardPlus className="h-4 w-4 mr-2" />
                                 Solicitar Internação
                             </Button>
                             <Button
-                                onClick={handleFinalizarAtendimento}
+                                // onClick={handleFinalizarAtendimento}
                                 className="h-10 px-6 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity font-semibold"
                             >
                                 <CheckCircle className="h-4 w-4 mr-2" />
@@ -227,7 +231,7 @@ const AtendimentoClinico = () => {
                         <CardContent className="pt-4 space-y-4">
                             <div>
                                 <p className="text-xs text-muted-foreground mb-1">Nome Completo</p>
-                                {/* <p className="text-sm font-semibold text-foreground">{atendimentoData.nomePaciente}</p> */}
+                                <p className="text-sm font-semibold text-foreground">{paciente.nomeCompleto}</p>
                             </div>
 
                             <Separator />
@@ -235,18 +239,22 @@ const AtendimentoClinico = () => {
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
                                     <p className="text-xs text-muted-foreground mb-1">Idade</p>
-                                    {/* <p className="text-sm font-medium text-foreground">{atendimentoData.idade} anos</p> */}
+                                    <p className="text-sm font-medium text-foreground">
+                                        {calcularIdade(paciente.dataNascimento)} anos
+                                    </p>
                                 </div>
                             </div>
 
                             <div>
                                 <p className="text-xs text-muted-foreground mb-1">CPF</p>
-                                {/* <p className="text-sm font-medium text-foreground">{atendimentoData.cpf}</p> */}
+                                <p className="text-sm font-medium text-foreground">{paciente.cpf}</p>
                             </div>
 
                             <div>
                                 <p className="text-xs text-muted-foreground mb-1">Data de Nascimento</p>
-                                {/* <p className="text-sm font-medium text-foreground">{atendimentoData.dataNascimento}</p> */}
+                                <p className="text-sm font-medium text-foreground">
+                                    {new Date(paciente.dataNascimento).toLocaleDateString('pt-BR')}
+                                </p>
                             </div>
 
 
@@ -257,7 +265,7 @@ const AtendimentoClinico = () => {
                                     <AlertCircle className="h-4 w-4 text-destructive" />
                                     <p className="text-xs font-semibold text-destructive">Alergias</p>
                                 </div>
-                                <div className="flex flex-wrap gap-2">
+                                {/* <div className="flex flex-wrap gap-2">
                                     {pacienteAtual.alergias.map((alergia, index) => (
                                         <Badge
                                             key={index}
@@ -267,7 +275,7 @@ const AtendimentoClinico = () => {
                                             {alergia}
                                         </Badge>
                                     ))}
-                                </div>
+                                </div> */}
                             </div>
                             
                         </CardContent>
@@ -369,43 +377,43 @@ const AtendimentoClinico = () => {
                             </p>
                         </CardHeader>
                         <CardContent className="p-0">
-                            <ScrollArea className="h-[calc(100vh-250px)]">
+                            /*<ScrollArea className="h-[calc(100vh-250px)]">
                                 <div className="p-4 space-y-4">
-                                    {historicoClinico.map((item, index) => (
-                                        <div key={item.id} className="relative animate-fade-in">
+                                    {/* {historicoClinico.map((item, index) => ( */}
+                                        {/* // <div key={item.id} className="relative animate-fade-in"> */}
                                             {/* Linha vertical */}
-                                            {index < historicoClinico.length - 1 && (
-                                                <div className="absolute left-4 top-8 bottom-0 w-0.5 bg-border" />
-                                            )}
+                                            {/* {index < historicoClinico.length - 1 && ( */}
+                                                {/* // <div className="absolute left-4 top-8 bottom-0 w-0.5 bg-border" /> */}
+                                            {/* // )} */}
 
-                                            <div className="flex gap-3">
+                                            {/* <div className="flex gap-3"> */}
                                                 {/* Ícone do tipo */}
-                                                <div className={`h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 relative z-10 ${getTipoBadgeClass(item.tipo)}`}>
-                                                    {getTipoIcon(item.tipo)}
-                                                </div>
+                                                {/* <div className={`h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 relative z-10 ${getTipoBadgeClass(item.tipo)}`}> */}
+                                                    {/* {getTipoIcon(item.tipo)} */}
+                                                {/* </div> */}
 
                                                 {/* Conteúdo */}
-                                                <div className="flex-1 pb-4">
-                                                    <div className="flex items-start justify-between mb-1">
-                                                        <Badge variant="outline" className={`${getTipoBadgeClass(item.tipo)} text-xs`}>
-                                                            {item.tipo}
-                                                        </Badge>
-                                                        <span className="text-xs text-muted-foreground">{item.data}</span>
-                                                    </div>
+                                                {/* <div className="flex-1 pb-4"> */}
+                                                    {/* <div className="flex items-start justify-between mb-1"> */}
+                                                        {/* <Badge variant="outline" className={`${getTipoBadgeClass(item.tipo)} text-xs`}> */}
+                                                            {/* {item.tipo} */}
+                                                        {/* </Badge> */}
+                                                        {/* <span className="text-xs text-muted-foreground">{item.data}</span> */}
+                                                    {/* </div> */}
 
-                                                    <h4 className="text-sm font-semibold text-foreground mt-2">
-                                                        {item.diagnostico}
-                                                    </h4>
-                                                    <p className="text-xs text-muted-foreground mt-1">
-                                                        {item.profissional} • {item.departamento}
-                                                    </p>
-                                                    <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
-                                                        {item.resumo}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
+                                                    {/* <h4 className="text-sm font-semibold text-foreground mt-2"> */}
+                                                        {/* {item.diagnostico} */}
+                                                    {/* </h4> */}
+                                                    {/* <p className="text-xs text-muted-foreground mt-1"> */}
+                                                        {/* {item.profissional} • {item.departamento} */}
+                                                    {/* </p> */}
+                                                    {/* <p className="text-xs text-muted-foreground mt-2 leading-relaxed"> */}
+                                                        {/* {item.resumo} */}
+                                                    {/* </p> */}
+                                                {/* </div> */}
+                                            {/* </div> */}
+                                        {/* </div> */}
+                                    {/* ))} */}
                                 </div>
                             </ScrollArea>
                         </CardContent>
@@ -414,19 +422,19 @@ const AtendimentoClinico = () => {
             </main>
 
             {/* Modal de Solicitação de Internação */}
-            <SolicitarInternacaoModal
+            {/* <SolicitarInternacaoModal
                 open={modalInternacaoOpen}
                 onOpenChange={setModalInternacaoOpen}
                 pacienteNome={pacienteAtual.nome}
-            />
+            /> */}
 
             {/* Modal de Registrar Alta Médica */}
-            <RegistrarAltaMedicaModal
+            {/* <RegistrarAltaMedicaModal
                 open={modalAltaMedicaOpen}
                 onOpenChange={setModalAltaMedicaOpen}
                 pacienteNome={pacienteAtual.nome}
                 onConfirmar={handleConfirmarAlta}
-            />
+            /> */}
         </div>
     );
 };

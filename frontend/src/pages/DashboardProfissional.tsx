@@ -47,7 +47,6 @@ const DashboardProfissional = () => {
             if (!response.ok) throw new Error("Falha ao buscar");
             
             const data: AtendimentoBackend[] = await response.json();
-            console.log('a:', data)
             
             // Filtra apenas os que não estão finalizados para o Dashboard
             const ativos = data.filter(a => a.status !== "FINALIZADO");
@@ -62,7 +61,6 @@ const DashboardProfissional = () => {
                 // Converte ENUM (AGUARDANDO) para Texto Bonito (Aguardando)
                 status: mapStatus(item.status)
             }));
-            console.log(formatados)
             setPacientes(formatados);
         } catch (error) {
             console.error(error);
@@ -83,10 +81,18 @@ const DashboardProfissional = () => {
     };
 
     const handleChamarPaciente = async (id: number) => {
+<<<<<<< HEAD
         // Chama o endpoint que muda o status para EM_ATENDIMENTO
         const response = await fetch(`http://localhost:8080/api/atendimentos/${id}/iniciar`, {
             method: "PUT"
         });
+=======
+        try {
+            // Chama o endpoint que muda o status para EM_ATENDIMENTO
+            const response = await fetch(`http://localhost:8080/api/atendimentos/${id}/iniciar`, {
+                method: "PUT"
+            });
+>>>>>>> f841377b5e677a0a085945ad25887240a3cd577b
 
         if (!response.ok) {
             toast({
