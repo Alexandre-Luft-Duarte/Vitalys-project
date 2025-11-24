@@ -14,15 +14,11 @@ import { useToast } from "@/hooks/use-toast";
 import { CadastroPacienteType } from "@/lib/types.ts";
 import {UFS} from "@/lib/constants.ts"
 
-// --- LÓGICA DE VALIDAÇÃO (REGRAS DE NEGÓCIO) ---
 const cadastroSchema = z.object({
-    // 1. Campos Obrigatórios (Não podem ser nulos)
     nome: z.string().trim().min(3, "Nome deve ter pelo menos 3 caracteres").max(100, "Nome muito longo"),
     cpf: z.string().min(14, "CPF inválido").regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF inválido"),
     dataNascimento: z.string().min(1, "Data de nascimento é obrigatória"),
 
-    // 2. Campos Opcionais (Podem ser nulos/vazios)
-    telefone: z.string().optional(), // Agora está em Dados Pessoais
     descricaoMedica: z.string().optional(),
 
     // 3. Endereço (Regra Condicional)
@@ -33,7 +29,6 @@ const cadastroSchema = z.object({
     cidade: z.string().optional(),
     estado: z.string().optional(),
 }).superRefine((data, ctx) => {
-    // LÓGICA: Se preencher a RUA (Logradouro), Cidade e UF são obrigatórios
     if (data.rua && data.rua.trim().length > 0) {
         if (!data.cidade || data.cidade.trim().length < 2) {
             ctx.addIssue({
@@ -50,7 +45,6 @@ const cadastroSchema = z.object({
             });
         }
     }
-    // Validação de formato de telefone APENAS se estiver preenchido
     if (data.telefone && data.telefone.length > 0 && data.telefone.length < 14) {
         ctx.addIssue({
             code: z.ZodIssueCode.custom,
@@ -109,21 +103,17 @@ const CadastroPaciente = () => {
     const onSubmit = async (data: CadastroFormData) => {
         setIsSubmitting(true);
 
-        // Preparar Objeto para o Backend
         const payload: CadastroPacienteType = {
             nomeCompleto: data.nome,
             cpf: data.cpf.replace(/\D/g, ""),
             dataNascimento: data.dataNascimento,
 
-            // Campos opcionais
             ...(data.descricaoMedica && { descricaoMedica: data.descricaoMedica }),
 
             contato: {
-                // Apenas telefone agora
                 ...(data.telefone && { telefone: data.telefone.replace(/\D/g, "") }),
             },
 
-            // Endereço apenas se houver rua
             ...(data.rua ? {
                 endereco: {
                     cep: data.cep?.replace(/\D/g, ""),
@@ -182,10 +172,8 @@ const CadastroPaciente = () => {
                     </p>
                 </div>
 
-                {/* Formulário */}
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
-                    {/* --- Seção 1: Dados Pessoais (Telefone movido para cá) --- */}
                     <Card className="shadow-md">
                         <CardHeader className="bg-gradient-to-r from-primary/10 to-accent/10 border-b border-border">
                             <CardTitle className="text-xl text-foreground">Dados Pessoais</CardTitle>
@@ -205,7 +193,6 @@ const CadastroPaciente = () => {
                                 {errors.nome && <p className="text-sm text-destructive">{errors.nome.message}</p>}
                             </div>
 
-                            {/* Grid reorganizado: CPF, Nascimento e Telefone */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="cpf" className="text-foreground font-medium">
@@ -253,7 +240,6 @@ const CadastroPaciente = () => {
                         </CardContent>
                     </Card>
 
-                    {/* --- Seção 2: Dados Clínicos --- */}
                     <Card className="shadow-md">
                         <CardHeader className="bg-gradient-to-r from-primary/10 to-accent/10 border-b border-border">
                             <CardTitle className="text-xl text-foreground">Dados Clínicos</CardTitle>
@@ -274,7 +260,6 @@ const CadastroPaciente = () => {
                         </CardContent>
                     </Card>
 
-                    {/* --- Seção 3: Endereço --- */}
                     <Card className="shadow-md">
                         <CardHeader className="bg-gradient-to-r from-primary/10 to-accent/10 border-b border-border">
                             <CardTitle className="text-xl text-foreground">Endereço</CardTitle>
@@ -369,7 +354,6 @@ const CadastroPaciente = () => {
                         </CardContent>
                     </Card>
 
-                    {/* Botões */}
                     <div className="flex justify-end gap-4 pt-4">
                         <Button
                             type="button"

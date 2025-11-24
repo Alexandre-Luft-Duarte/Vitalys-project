@@ -1,15 +1,30 @@
 package org.unoesc.backend.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-import jakarta.persistence.*;
-
+/**
+ * Representa uma especialidade médica (ex: Cardiologia, Pediatria).
+ * Utilizada para categorizar os profissionais de saúde.
+ *
+ * @author Equipe Vitalys
+ * @version 1.0
+ */
 @Entity
 @Table(name = "especialidade")
 public class Especialidade {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idEspecialidade;
 
+    /**
+     * Nome da especialidade médica.
+     */
     @Column(nullable = false)
     private String nome;
 

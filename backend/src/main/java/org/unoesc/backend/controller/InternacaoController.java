@@ -1,18 +1,46 @@
 package org.unoesc.backend.controller;
 
-import org.unoesc.backend.dto.EvolucaoRequestDTO;
-import org.unoesc.backend.dto.InternacaoRequestDTO;
-import org.unoesc.backend.model.*; // Importa todas as suas entidades
-import org.unoesc.backend.repository.*; // Importa todos os seus repositórios
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+import org.unoesc.backend.dto.EvolucaoRequestDTO;
+import org.unoesc.backend.dto.InternacaoRequestDTO;
+import org.unoesc.backend.model.Atendimento;
+import org.unoesc.backend.model.Departamento;
+import org.unoesc.backend.model.EvolucaoInternacao;
+import org.unoesc.backend.model.Internacao;
+import org.unoesc.backend.model.Paciente;
+import org.unoesc.backend.model.Profissional;
+import org.unoesc.backend.model.StatusAtendimento;
+import org.unoesc.backend.model.StatusInternacao;
+import org.unoesc.backend.repository.AtendimentoRepository;
+import org.unoesc.backend.repository.DepartamentoRepository;
+import org.unoesc.backend.repository.EvolucaoInternacaoRepository;
+import org.unoesc.backend.repository.InternacaoRepository;
+import org.unoesc.backend.repository.PacienteRepository;
+import org.unoesc.backend.repository.ProfissionalRepository;
+
+/**
+ * Controlador responsável pelo gerenciamento de internações.
+ * <p>
+ * Controla todo o ciclo de vida da internação: Solicitação, Admissão (Ativa),
+ * Registro de Evoluções Clínicas e Alta Médica (Finalização).
+ * </p>
+ *
+ * @author Equipe Vitalys
+ * @version 1.0
+ */
 @RestController
 @RequestMapping("/api/internacoes")
 public class InternacaoController {
@@ -24,11 +52,16 @@ public class InternacaoController {
     @Autowired private AtendimentoRepository atendimentoRepository;
     @Autowired private DepartamentoRepository departamentoRepository;
 
-
-
     /**
-     * UC-05 (Fluxo 1): Solicitar Internação
-     * Cria um novo registro de Internacao com status ATIVA.
+     * Solicita e inicia uma nova internação (UC-05 Fluxo 1).
+     * <p>
+     * Cria um registro de internação com status ATIVA, define a data de entrada
+     * e finaliza o atendimento de origem (consulta) automaticamente.
+     * </p>
+     *
+     * @param request DTO contendo IDs do paciente, profissional, atendimento origem e departamento.
+     * @return A nova internação criada com status ATIVA.
+     * @throws ResponseStatusException Se alguma entidade vinculada não for encontrada.
      */
     @PostMapping
     public ResponseEntity<Internacao> solicitarInternacao(@RequestBody InternacaoRequestDTO request) {
@@ -51,25 +84,25 @@ public class InternacaoController {
         novaInternacao.setPaciente(paciente);
         novaInternacao.setProfissional(profissional);
         novaInternacao.setDepartamento(departamento);
-        novaInternacao.setAtendimento(atendimento);// Profissional responsável pela internação
+        novaInternacao.setAtendimento(atendimento);
         novaInternacao.setDataEntrada(LocalDateTime.now());
         novaInternacao.setStatus(StatusInternacao.ATIVA);
 
+        // Finaliza o atendimento de origem conforme regra de negócio (UC-04)
         atendimento.setStatus(StatusAtendimento.FINALIZADO);
+        
         // 3. Salvar
         Internacao internacaoSalva = internacaoRepository.save(novaInternacao);
-
-        // **LEMBRETE (Regra de Negócio):**
-        // O UC-04 diz que após solicitar a internação, o atendimento (consulta)
-        // é finalizado[cite: 148, 149]. O frontend deve, após esta chamada,
-        // chamar o endpoint `PUT /api/atendimentos/{id}/finalizar` do AtendimentoController.
 
         return ResponseEntity.status(HttpStatus.CREATED).body(internacaoSalva);
     }
 
     /**
-     * UC-05 (Fluxo 2): Registrar Alta Médica
-     * Muda o status da internação para FINALIZADA e registra a data de saída.
+     * Registra a alta médica de um paciente (UC-05 Fluxo 2).
+     * Muda o status para FINALIZADA e preenche a data de saída.
+     *
+     * @param id Identificador da internação.
+     * @return Internação atualizada.
      */
     @PutMapping("/{id}/registrar-alta")
     public ResponseEntity<Internacao> registrarAlta(@PathVariable Long id) {
@@ -84,7 +117,11 @@ public class InternacaoController {
     }
 
     /**
-     * Endpoint para adicionar evoluções (anotações diárias) a uma internação.
+     * Adiciona uma evolução clínica (anotação diária) a uma internação em andamento.
+     *
+     * @param id Identificador da internação.
+     * @param request DTO contendo o texto da evolução e o ID do profissional.
+     * @return A evolução criada.
      */
     @PostMapping("/{id}/evolucoes")
     public ResponseEntity<EvolucaoInternacao> adicionarEvolucao(
@@ -108,7 +145,9 @@ public class InternacaoController {
     }
 
     /**
-     * Endpoint para listar todas as internações ativas
+     * Lista apenas as internações que estão atualmente ativas (ocupando leito).
+     *
+     * @return Lista de internações com status ATIVA.
      */
     @GetMapping("/ativas")
     public ResponseEntity<List<Internacao>> listarInternacoesAtivas() {
@@ -117,7 +156,9 @@ public class InternacaoController {
     }
 
     /**
-     * Endpoint para listar todas as internações ativas
+     * Lista todas as internações registradas no sistema (histórico completo).
+     *
+     * @return Lista de todas as internações.
      */
     @GetMapping
     public ResponseEntity<List<Internacao>> listarInternacoes() {
@@ -126,12 +167,13 @@ public class InternacaoController {
     }
 
     /**
-     * Endpoint para ver o histórico de internações de um paciente
+     * Busca o histórico de internações de um paciente específico.
+     *
+     * @param pacienteId ID do paciente.
+     * @return Lista de internações daquele paciente.
      */
     @GetMapping("/paciente/{pacienteId}")
     public ResponseEntity<List<Internacao>> getHistoricoInternacoesPaciente(@PathVariable Long pacienteId) {
-        // **AÇÃO NECESSÁRIA:** Adicione este método na sua interface InternacaoRepository:
-        // List<Internacao> findByPacienteIdPessoa(Long pacienteId);
         List<Internacao> historico = internacaoRepository.findByPacienteIdPessoa(pacienteId);
         return ResponseEntity.ok(historico);
     }

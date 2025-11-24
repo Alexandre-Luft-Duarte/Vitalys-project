@@ -54,17 +54,6 @@ const Login = () => {
             });
             return
         }
-
-        // Simular autenticação
-        // setTimeout(() => {
-        //     toast({
-        //         title: "Login realizado",
-        //         description: "Bem-vindo ao Sistema de Gestão Hospitalar!",
-        //     });
-        //     setIsLoading(false);
-        //     // Navegar para o dashboard
-        //     navigate("/dashboard");
-        // }, 1500);
     };
 
     return !isAuthenticated ? (
@@ -118,15 +107,6 @@ const Login = () => {
                                 className="h-11 bg-background border-border focus-visible:ring-primary"
                                 disabled={isLoading}
                             />
-                        </div>
-
-                        <div className="flex justify-end">
-                            <a
-                                href="#"
-                                className="text-sm text-primary hover:text-primary/80 transition-colors font-medium"
-                            >
-                                Esqueceu sua senha?
-                            </a>
                         </div>
 
                         <Button

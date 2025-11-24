@@ -6,10 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/contexts/AuthContext"; // Ajustado import para usar alias e remover extensão .tsx
+import { useAuth } from "@/contexts/AuthContext"; 
 import hospitalLogo from "@/assets/vitalys.png";
 
-// Tipo auxiliar para o departamento
 type Departamento = {
     id: number;
     nome: string;
@@ -21,19 +20,15 @@ const CadastroUsuario = () => {
     const [cpf, setCpf] = useState("");
     const [dataNascimento, setDataNascimento] = useState("");
 
-    // Campos de Usuário e Login
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [confirmarSenha, setConfirmarSenha] = useState("");
 
-    // Campos de Controle de Tipo
     const [tipoUsuario, setTipoUsuario] = useState("");
 
-    // NOVO: Campos para Departamento (Substitui Especialidade)
     const [departamentoId, setDepartamentoId] = useState("");
     const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
 
-    // Campos Opcionais
     const [telefone, setTelefone] = useState("");
     const [endereco, setEndereco] = useState("");
 
@@ -68,7 +63,6 @@ const CadastroUsuario = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // 1. Validação Básica
         if (!nomeCompleto || !cpf || !dataNascimento || !email || !tipoUsuario || !senha || !confirmarSenha) {
             toast({
                 title: "Campos obrigatórios",
@@ -78,7 +72,6 @@ const CadastroUsuario = () => {
             return;
         }
 
-        // 2. Validação Específica (Agora valida Departamento)
         if (tipoUsuario === "PROFISSIONAL" && !departamentoId) {
             toast({
                 title: "Campo obrigatório",
@@ -108,7 +101,6 @@ const CadastroUsuario = () => {
 
         setIsLoading(true);
 
-        // 3. Montagem do Payload
         const payload: any = {
             nomeCompleto,
             cpf: cpf.replace(/\D/g, ""),
@@ -118,7 +110,6 @@ const CadastroUsuario = () => {
             tipoUsuario,
             telefone,
             endereco,
-            // Envia o ID do departamento se for profissional
             ...(tipoUsuario === "PROFISSIONAL" && { departamentoId: Number(departamentoId) })
         };
 
@@ -133,7 +124,6 @@ const CadastroUsuario = () => {
             navigate("/login");
         } catch (error) {
             setIsLoading(false);
-            // O erro é tratado, mas mantemos o toast por segurança
             toast({
                 title: "Erro ao cadastrar",
                 description: "Ocorreu um erro ao tentar criar o usuário.",
@@ -142,7 +132,6 @@ const CadastroUsuario = () => {
         }
     };
 
-    // --- EFEITO: Busca Departamentos quando seleciona PROFISSIONAL ---
     useEffect(() => {
         if (tipoUsuario === "PROFISSIONAL") {
             fetchDepartamentos();
@@ -154,7 +143,6 @@ const CadastroUsuario = () => {
             <Card className="w-full max-w-2xl shadow-strong">
                 <CardHeader className="space-y-4 text-center pb-6">
                     <div className="flex justify-center mb-2">
-                        {/* Substituído imagem por ícone para evitar erro de importação */}
                         <div className="flex justify-center mb-2">
                             <img
                                 src={hospitalLogo}
@@ -176,7 +164,6 @@ const CadastroUsuario = () => {
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-6">
 
-                        {/* DADOS PESSOAIS */}
                         <div className="space-y-4">
                             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Dados Pessoais</h3>
 
@@ -187,7 +174,7 @@ const CadastroUsuario = () => {
                                         id="nomeCompleto"
                                         placeholder="Nome completo do colaborador"
                                         value={nomeCompleto}
-                                        onChange={(e) => setNomeCompleto(e.target.value)}
+                                        onChange={(e: any) => setNomeCompleto(e.target.value)}
                                         disabled={isLoading}
                                     />
                                 </div>
@@ -210,7 +197,7 @@ const CadastroUsuario = () => {
                                         id="dataNascimento"
                                         type="date"
                                         value={dataNascimento}
-                                        onChange={(e) => setDataNascimento(e.target.value)}
+                                        onChange={(e: any) => setDataNascimento(e.target.value)}
                                         disabled={isLoading}
                                     />
                                 </div>
@@ -220,7 +207,7 @@ const CadastroUsuario = () => {
                                         id="telefone"
                                         placeholder="(00) 00000-0000"
                                         value={telefone}
-                                        onChange={(e) => setTelefone(e.target.value)}
+                                        onChange={(e: any) => setTelefone(e.target.value)}
                                         disabled={isLoading}
                                     />
                                 </div>
@@ -238,16 +225,14 @@ const CadastroUsuario = () => {
                             </div>
                         </div>
 
-                        {/* DADOS DO SISTEMA */}
                         <div className="space-y-4 border-t pt-4">
                             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Dados de Acesso e Função</h3>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="tipoUsuario">Tipo de Usuário *</Label>
-                                    <Select value={tipoUsuario} onValueChange={(val) => {
+                                    <Select value={tipoUsuario} onValueChange={(val: any) => {
                                         setTipoUsuario(val);
-                                        // Limpa o departamento se mudar de tipo
                                         if (val !== "PROFISSIONAL") setDepartamentoId("");
                                     }} disabled={isLoading}>
                                         <SelectTrigger>
@@ -260,7 +245,6 @@ const CadastroUsuario = () => {
                                     </Select>
                                 </div>
 
-                                {/* Campo Condicional: SELECT DE DEPARTAMENTOS */}
                                 {tipoUsuario === "PROFISSIONAL" && (
                                     <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
                                         <Label htmlFor="departamentoId">Departamento *</Label>

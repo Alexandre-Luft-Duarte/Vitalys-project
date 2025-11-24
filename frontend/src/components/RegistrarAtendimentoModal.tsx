@@ -178,7 +178,7 @@ const RegistrarAtendimentoModal = ({
                             Encaminhar para Departamento <span className="text-destructive">*</span>
                         </Label>
                         <Select
-                            onValueChange={(value) => setValue("departamento", value)}
+                            onValueChange={(value: any) => setValue("departamento", value)}
                             disabled={isSubmitting}
                         >
                             <SelectTrigger className="h-11">

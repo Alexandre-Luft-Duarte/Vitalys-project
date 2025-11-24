@@ -10,7 +10,6 @@ import { useToast } from "@/hooks/use-toast.ts";
 import { PacienteListagemType } from "@/lib/types.ts";
 
 
-// Dados de exemplo para a fila de chegada
 const initialQueue = [
     { id: 1, nome: "Maria Silva Santos", horaChegada: "08:15", departamento: "Triagem" },
     { id: 2, nome: "João Pedro Oliveira", horaChegada: "08:32", departamento: "Cardiologia" },
@@ -19,7 +18,6 @@ const initialQueue = [
     { id: 5, nome: "Fernanda Rodrigues", horaChegada: "09:18", departamento: "Ortopedia" },
 ];
 
-// onClick={() => handleSelecionarPaciente(patient.id, patient.nome)
 
 const Dashboard = () => {
     const { toast } = useToast();
@@ -106,7 +104,6 @@ const Dashboard = () => {
                     </p>
                 </div>
 
-                {/* Campo de Busca */}
                 <Card className="p-6 mb-6 shadow-md">
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -120,7 +117,6 @@ const Dashboard = () => {
                     </div>
                 </Card>
 
-                {/* Resultados da Busca */}
                 <div className="space-y-4">
                     <h2 className="text-lg font-semibold text-foreground">
                         {resultados.length} {resultados.length === 1 ? "resultado encontrado" : "resultados encontrados"}
@@ -173,7 +169,6 @@ const Dashboard = () => {
                 </div>
             </main>
 
-            {/* Modal de Registrar Atendimento */}
             {pacienteSelecionado && (
                 <RegistrarAtendimentoModal
                     open={modalOpen}

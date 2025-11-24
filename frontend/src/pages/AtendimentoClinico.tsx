@@ -53,14 +53,12 @@ const AtendimentoClinico = () => {
 
         const carregarDados = async () => {
             try {
-                // 1. Busca o Atendimento para pegar o ID do Paciente
                 const respAtendimento = await fetch(`http://localhost:8080/api/atendimentos/${id}`);
                 if (!respAtendimento.ok) throw new Error("Erro ao buscar atendimento");
                 const dadosAtendimento = await respAtendimento.json();
                 console.log("dadosAtendimento", dadosAtendimento);
                 setAtendimento(dadosAtendimento);
 
-                // 2. Com o ID do Paciente, busca os dados detalhados no PacienteController
                 if (dadosAtendimento.idPessoa) {
                     const respPaciente = await fetch(`http://localhost:8080/api/pacientes/${dadosAtendimento.idPessoa}`);
                     if (!respPaciente.ok) throw new Error("Erro ao buscar paciente");
@@ -97,7 +95,6 @@ const AtendimentoClinico = () => {
         }
 
         try {
-            // ID do profissional fixo em 1 para teste (ou pegue do login se tiver)
             const profissionalId = window.localStorage.getItem("idUsuario");
 
             const response = await fetch(`http://localhost:8080/api/atendimentos/${id}/anotacoes`, {
@@ -114,7 +111,7 @@ const AtendimentoClinico = () => {
             toast({
                 title: "Sucesso",
                 description: "Anamnese salva na tabela de Anotações Médicas.",
-                variant: "default" // ou className="bg-green-500"
+                variant: "default"
             });
             setAnamnese("");
         } catch (error) {
@@ -225,11 +222,8 @@ const AtendimentoClinico = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
-            {/* Cabeçalho */}
 
-            {/* Layout de 3 Colunas */}
-            <div className="px-6 py-6"> {/* px-6 já equivale a 1.5rem (24px) */}
-                {/* Alterado de 'justify-between' para 'justify-end' */}
+            <div className="px-6 py-6"> 
                 <div className="flex items-center justify-end">
                     <Button
                         variant="ghost"
@@ -261,7 +255,6 @@ const AtendimentoClinico = () => {
             </div>
 
             <main className="p-6 grid grid-cols-12 gap-6">
-                {/* Coluna Esquerda - Resumo do Paciente (Fixa) */}
                 <aside className="col-span-12 lg:col-span-3">
                     <Card className="shadow-md sticky top-24">
                         <CardHeader className="bg-gradient-to-r from-primary/10 to-accent/10 border-b border-border pb-4">
@@ -320,7 +313,6 @@ const AtendimentoClinico = () => {
                     </Card>
                 </aside>
 
-                {/* Coluna Central - Ficha do Atendimento Atual */}
                 <section className="col-span-12 lg:col-span-6">
                     <Card className="shadow-md">
                         <CardHeader className="bg-gradient-to-r from-primary/10 to-accent/10 border-b border-border">
@@ -405,7 +397,6 @@ const AtendimentoClinico = () => {
                     </Card>
                 </section>
 
-                {/* Coluna Direita - Histórico Clínico */}
                 <aside className="col-span-12 lg:col-span-3">
                     <Card className="shadow-md">
                         <CardHeader className="bg-gradient-to-r from-primary/10 to-accent/10 border-b border-border pb-4">
@@ -421,22 +412,17 @@ const AtendimentoClinico = () => {
                             <ScrollArea className="h-[calc(100vh-250px)]">
                                 <div className="p-4 space-y-4">
                                     {historicoClinico && historicoClinico.map((historico: any, index: number) => {
-                                        // 1. Extração dos objetos principais
                                         const { atendimento, internacao } = historico;
 
-                                        // 2. Determinar se é Internação ou Consulta/Atendimento
-                                        // Se o objeto 'internacao' existir e não for null, consideramos Internação
                                         const isInternacao = !!internacao;
                                         const tipo = isInternacao ? "Internação" : "Consulta";
 
-                                        // 3. Normalização dos dados para exibição
                                         const dataEvento = isInternacao
                                             ? internacao.dataEntrada
                                             : atendimento.dataHora;
 
                                         const motivo = atendimento.motivo || "Sem motivo registrado";
 
-                                        // Pega o profissional da internação se houver, senão do atendimento
                                         const profissionalNome = isInternacao
                                             ? internacao.profissional?.nomeCompleto
                                             : atendimento.profissional?.nomeCompleto;
@@ -445,25 +431,21 @@ const AtendimentoClinico = () => {
                                             ? internacao.departamento?.nome
                                             : atendimento.departamento?.nome;
 
-                                        // Formatação de data simples (ajuste conforme seu helper formatDate)
                                         const dataFormatada = new Date(dataEvento).toLocaleDateString('pt-BR', {
                                             day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
                                         });
 
                                         return (
                                             <div key={atendimento.idAtendimento} className="relative animate-fade-in">
-                                                {/* Linha vertical de conexão */}
                                                 {index < historicoClinico.length - 1 && (
                                                     <div className="absolute left-4 top-8 bottom-0 w-0.5 bg-border" />
                                                 )}
 
                                                 <div className="flex gap-3">
-                                                    {/* Ícone do tipo */}
                                                     <div className={`h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 relative z-10 ${getTipoBadgeClass(tipo)}`}>
                                                         {getTipoIcon(tipo)}
                                                     </div>
 
-                                                    {/* Conteúdo */}
                                                     <div className="flex-1 pb-4">
                                                         <div className="flex items-start justify-between mb-1">
                                                             <Badge variant="outline" className={`${getTipoBadgeClass(tipo)} text-xs`}>
@@ -482,7 +464,6 @@ const AtendimentoClinico = () => {
                                                             {profissionalNome || "Profissional N/A"} • {departamentoNome || "Geral"}
                                                         </p>
 
-                                                        {/* Exibe anotações ou evoluções se quiser um resumo */}
                                                         <p className="text-xs text-muted-foreground mt-2 leading-relaxed line-clamp-2">
                                                             {isInternacao
                                                                 ? `Status: ${internacao.status}`
@@ -500,7 +481,6 @@ const AtendimentoClinico = () => {
                 </aside>
             </main>
 
-            {/* Modal de Registrar Alta Médica */}
             <RegistrarAltaMedicaModal
                 open={modalAltaMedicaOpen}
                 onOpenChange={setModalAltaMedicaOpen}

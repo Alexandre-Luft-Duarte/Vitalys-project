@@ -27,6 +27,7 @@ export function AuthContext({ children } : { children: React.ReactNode }) {
         }
 
         const data = await response.json();
+        console.log("data", data)
         window.localStorage.setItem("nome", data.nome);
         window.localStorage.setItem("token", data.token);
         window.localStorage.setItem("tipoUsuario", data.tipoUsuario);
@@ -63,7 +64,7 @@ export function AuthContext({ children } : { children: React.ReactNode }) {
         console.log("useEffect")
         const token = window.localStorage.getItem("token");
         console.log("token", token)
-        if (token === "dummy-token-123456") {
+        if (token === "dummy-token") {
             console.log("token encontrado")
             setIsAuthenticated(true);
         } else {

@@ -13,20 +13,16 @@ const PacientesInternados = () => {
     const navigate = useNavigate();
     const { toast } = useToast();
     
-    // Estado para armazenar os dados da API
     const [internacoes, setInternacoes] = useState<any[]>([]);
     
-    // Controle do Modal
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedInternacao, setSelectedInternacao] = useState<any>(null);
 
-    // Função para abrir o modal
     function handlePacienteClick(internacao: any) {
         setSelectedInternacao(internacao);
         setIsModalOpen(true);
     }
 
-    // Busca dados do backend
     async function getPacientesInternados() {
         try {
             const response = await fetch('http://localhost:8080/api/internacoes/ativas');
@@ -43,20 +39,15 @@ const PacientesInternados = () => {
         }
     }
 
-    // Carrega dados ao montar
     useEffect(() => {
         getPacientesInternados();
     }, []);
 
-    // Calculando estatísticas dinamicamente com base nos dados da API
-    // Obs: Ajuste a string de comparação ('Crítico', 'Estável') conforme o que seu backend retorna no campo 'status' ou 'classificacao'
     const totalPacientes = internacoes.length;
-    // Exemplo: Filtrando por status fictício. Se seu backend só retorna "Ativa", esses números serão 0 ou precisam de outra lógica.
     const pacientesCriticos = internacoes.filter((i) => i.status?.toLowerCase() === "crítico").length;
     const pacientesEstaveis = internacoes.filter((i) => i.status?.toLowerCase() === "estável" || i.status?.toLowerCase() === "ativa").length; 
     const pacientesObservacao = internacoes.filter((i) => i.status?.toLowerCase() === "observação").length;
 
-    // Badge da Tabela
     const getStatusBadge = (status: string) => {
         const variants: Record<string, { className: string; text: string }> = {
             ativa: {
@@ -68,7 +59,6 @@ const PacientesInternados = () => {
                 text: "Finalizada",
             },
         };
-        // Fallback caso venha algo diferente
         const variant = variants[status.toLowerCase()] || variants['ativa']; 
         
         return (
@@ -80,7 +70,6 @@ const PacientesInternados = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
-            {/* Conteúdo Principal */}
             <main className="container mx-auto px-6 py-8">
                 <section className="mb-8">
                      <Button
@@ -93,7 +82,6 @@ const PacientesInternados = () => {
                     </Button>
                 </section>
 
-                {/* Tabela de Pacientes */}
                 <div className="bg-card rounded-lg border border-border shadow-md overflow-hidden">
                     <div className="bg-gradient-to-r from-primary to-accent px-6 py-4">
                         <h2 className="text-xl font-bold text-primary-foreground">
@@ -163,16 +151,15 @@ const PacientesInternados = () => {
                 </div>
             </main>
 
-            {/* Renderização Condicional - A solução do problema do Modal */}
             {selectedInternacao && (
                 <EvolucaoInternacaoModal
                     open={isModalOpen}
-                    onOpenChange={(open) => {
+                    onOpenChange={(open: any) => {
                         setIsModalOpen(open);
-                        // Limpa o selecionado ao fechar para garantir remontagem na próxima abertura
                         if(!open) setTimeout(() => setSelectedInternacao(null), 300); 
                     }}
                     internacao={selectedInternacao}
+                    onUpdate={getPacientesInternados} 
                 />
             )}
         </div>

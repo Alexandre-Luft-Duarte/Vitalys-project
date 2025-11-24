@@ -21,7 +21,7 @@ interface AtendimentoBackend {
     status: string; 
     motivo: string;
     nomePaciente: string;
-    nomeProfissional: string;// <--- Mudou aqui! Vem direto agora.
+    nomeProfissional: string;
 }
 
 interface PacienteDisplay {
@@ -67,7 +67,6 @@ const DashboardProfissional = () => {
             setLoading(false); 
         }
     };
-    // Auxiliar para converter o Status
     const mapStatus = (statusBackend: string): PacienteDisplay["status"] => {
         if (statusBackend === "EM_ATENDIMENTO") return "Em Atendimento";
         if (statusBackend === "FINALIZADO") return "Finalizado";
@@ -75,7 +74,6 @@ const DashboardProfissional = () => {
     };
 
     const handleChamarPaciente = async (id: number) => {
-        // Chama o endpoint que muda o status para EM_ATENDIMENTO
         const idUsuario = window.localStorage.getItem("idUsuario");
         const response = await fetch(`http://localhost:8080/api/atendimentos/${id}/iniciar`, {
             method: "PUT",
@@ -97,14 +95,12 @@ const DashboardProfissional = () => {
             description: "Direcionando para o prontuário...",
         });
 
-        // Atualiza a lista localmente para feedback visual imediato
         setPacientes((prev) =>
             prev.map((p) => p.id === id ? { ...p, status: "Em Atendimento" } : p)
         );
 
-        // Navega passando o ID real do atendimento
         setTimeout(() => {
-            navigate(`/atendimento-clinico/${id}`); // <--- IMPORTANTE: Passar o ID na URL
+            navigate(`/atendimento-clinico/${id}`); 
         }, 1000);
     };
 
@@ -157,7 +153,6 @@ const DashboardProfissional = () => {
 
     return tipoUsuario === "PROFISSIONAL" ? (
         <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
-            {/* Conteúdo Principal */}
             <main className="container mx-auto px-6 py-8">
 
                 <section className="mb-8">
@@ -174,7 +169,6 @@ const DashboardProfissional = () => {
                 </section>
 
                 <div className="bg-card rounded-lg border border-border shadow-md overflow-hidden">
-                    {/* Cabeçalho da Tabela */}
                     <div className="bg-gradient-to-r from-primary to-accent px-6 py-4">
                         <h2 className="text-xl font-bold text-primary-foreground">
                             Pacientes na Fila - {dadosProfissional?.departamento?.nome}
@@ -184,22 +178,18 @@ const DashboardProfissional = () => {
                         </p>
                     </div>
 
-                    {/* Tabela de Pacientes */}
                     <div className="p-6">
-                        {/* 1. VERIFICAÇÃO DE CARREGAMENTO */}
                         {loading ? (
                             <div className="text-center py-16 text-muted-foreground animate-pulse">
                                 <p className="text-lg font-medium">Carregando fila de atendimento...</p>
                             </div>
                         ) : pacientes.length === 0 ? (
-                            /* 2. LISTA VAZIA (Igual você já tinha) */
                             <div className="text-center py-16 text-muted-foreground">
                                 <ClipboardList className="h-16 w-16 mx-auto mb-4 opacity-40" />
                                 <p className="text-lg font-medium">Nenhum paciente na fila</p>
                                 <p className="text-sm mt-1">Aguardando novos pacientes...</p>
                             </div>
                         ) : (
-                            /* 3. TABELA DE DADOS (Mantém a estrutura, mas agora usa os dados reais) */
                             <Table>
                                 <TableHeader>
                                     <TableRow className="border-b border-border hover:bg-transparent">
@@ -239,7 +229,6 @@ const DashboardProfissional = () => {
                     </div>
                 </div>
 
-                {/* Informações Adicionais */}
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="bg-card rounded-lg border border-border p-4 shadow-sm">
                         <div className="flex items-center gap-3">

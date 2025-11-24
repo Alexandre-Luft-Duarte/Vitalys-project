@@ -49,7 +49,6 @@ const BuscarPaciente = () => {
     };
 
     const handleSelecionarPaciente = (paciente: typeof pacientes[0]) => {
-        // Redirecionar para cadastro de paciente com os dados preenchidos
         navigate("/cadastro-paciente", { state: { paciente } });
     };
 
@@ -59,9 +58,7 @@ const BuscarPaciente = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
-            {/* Cabeçalho */}
 
-            {/* Conteúdo Principal */}
             <main className="container mx-auto px-6 py-8 max-w-5xl">
 
                 <Button
@@ -83,7 +80,6 @@ const BuscarPaciente = () => {
                     </p>
                 </div>
 
-                {/* Campo de Busca */}
                 <Card className="p-6 mb-6 shadow-md">
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -97,7 +93,6 @@ const BuscarPaciente = () => {
                     </div>
                 </Card>
 
-                {/* Resultados da Busca */}
                 <div className="space-y-4">
                     <h2 className="text-lg font-semibold text-foreground">
                         {resultados.length} {resultados.length === 1 ? "resultado encontrado" : "resultados encontrados"}
@@ -136,7 +131,7 @@ const BuscarPaciente = () => {
                                     </div>
                                     <Button
                                         variant="outline"
-                                        onClick={(e) => {
+                                        onClick={(e: any) => {
                                             e.stopPropagation();
                                             handleSelecionarPaciente(paciente);
                                         }}

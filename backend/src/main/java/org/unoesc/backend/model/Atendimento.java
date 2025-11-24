@@ -1,6 +1,5 @@
 package org.unoesc.backend.model;
 
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,36 +17,72 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+/**
+ * Entidade que representa um atendimento clínico ou administrativo realizado a um paciente.
+ * <p>
+ * Centraliza as informações do fluxo de atendimento, vinculando o paciente a profissionais
+ * (médico ou recepcionista), departamento e registrando anotações médicas.
+ * </p>
+ *
+ * @author Equipe Vitalys
+ * @version 1.0
+ */
 @Entity
 @Table(name = "atendimento")
 public class Atendimento {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idAtendimento;
 
+    /**
+     * Data e hora exata da criação do atendimento.
+     */
     @Column(nullable = false)
     private LocalDateTime dataHora;
 
+    /**
+     * Estado atual do atendimento no fluxo de trabalho.
+     */
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private StatusAtendimento status;
 
+    /**
+     * Profissional (Médico/Enfermeiro) responsável pelo atendimento clínico.
+     * Pode ser nulo no momento da triagem/recepção.
+     */
     @ManyToOne
     @JoinColumn(nullable = true)
     private Profissional profissional;
 
+    /**
+     * Paciente que está sendo atendido.
+     */
     @ManyToOne
     private Paciente paciente;
 
+    /**
+     * Recepcionista que abriu o atendimento (triagem inicial).
+     */
     @ManyToOne
     private Recepcionista recepcionista;
 
+    /**
+     * Departamento onde o atendimento está ocorrendo (ex: Emergência, Clínica Geral).
+     */
     @ManyToOne
     private Departamento departamento;
 
+    /**
+     * Lista de anotações médicas (evoluções, anamneses) vinculadas a este atendimento.
+     */
     @OneToMany(mappedBy = "atendimento", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnotacaoMedica> anotacoesMedicas = new ArrayList<>();
 
+    /**
+     * Descrição breve do motivo ou queixa principal que gerou o atendimento.
+     */
     @Column(nullable = true)
     private String motivo;
 

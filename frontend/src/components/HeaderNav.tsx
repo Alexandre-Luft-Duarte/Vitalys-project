@@ -33,14 +33,6 @@ export default function HeaderNav() {
                             >
                                 Dashboard
                             </button>
-                            <button
-                                className="text-muted-foreground hover:text-primary transition-colors"
-                            >
-                                Agendamentos
-                            </button>
-                            <button className="text-muted-foreground hover:text-primary transition-colors">
-                                Relatórios
-                            </button>
                         </nav>
                     </div>
 

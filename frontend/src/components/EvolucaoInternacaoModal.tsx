@@ -15,7 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Bed, Calendar, User, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { formatDate } from "@/lib/utils"; // Certifique-se que essa função existe ou use uma formatação simples
+import { formatDate } from "@/lib/utils"; 
 
 const evolucaoSchema = z.object({
     evolucao: z.string().trim().min(10, "Evolução deve ter pelo menos 10 caracteres").max(2000, "Texto muito longo"),
@@ -23,7 +23,6 @@ const evolucaoSchema = z.object({
 
 type EvolucaoFormData = z.infer<typeof evolucaoSchema>;
 
-// Interface adaptada para o SEU Backend
 interface InternacaoData {
     id: number;
     status: string;
@@ -39,14 +38,13 @@ interface InternacaoData {
     profissional: {
         nomeCompleto: string;
     };
-    // Adicionei leito opcional pois não vi no seu fetch original, mas o Lovable usa
     leito?: string; 
 }
 
 interface EvolucaoInternacaoModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    internacao: InternacaoData | null; // Agora aceita null para facilitar a tipagem no pai
+    internacao: InternacaoData | null; 
     onUpdate: Function,
 }
 
@@ -68,7 +66,6 @@ const EvolucaoInternacaoModal = ({
         resolver: zodResolver(evolucaoSchema),
     });
 
-    // Resetar o form quando o modal fecha ou muda de paciente
     useEffect(() => {
         if (!open) {
             reset();
@@ -79,7 +76,6 @@ const EvolucaoInternacaoModal = ({
         if (!internacao) return;
         setIsSubmitting(true);
 
-        // AQUI ENTRARIA SUA CHAMADA PARA O BACKEND (POST/PUT)
 
         console.log(internacao)
 
@@ -120,7 +116,6 @@ const EvolucaoInternacaoModal = ({
         setIsSubmitting(true);
 
 
-        // AQUI ENTRARIA SUA CHAMADA DE ALTA PARA O BACKEND
         const response = await fetch(`http://localhost:8080/api/internacoes/${internacao.idInternacao}/registrar-alta`, {
             method: "PUT"
         })
@@ -149,11 +144,9 @@ const EvolucaoInternacaoModal = ({
         onOpenChange(false);
     };
 
-    // Adaptado para os status que podem vir do seu backend
     const getStatusBadge = (status: string) => {
         const statusNormalized = status?.toLowerCase() || "";
         
-        // Mapeamento de cores
         let className = "bg-gray-100 text-gray-800 border-gray-200";
         
         if (statusNormalized === 'ativa' || statusNormalized === 'estável') {
@@ -214,7 +207,6 @@ const EvolucaoInternacaoModal = ({
                                 <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
                                 <span className="text-muted-foreground">Internação:</span>
                                 <span className="ml-2 text-foreground font-medium">
-                                    {/* Usando formatDate ou a string direta se não tiver a função */}
                                     {typeof formatDate === 'function' ? formatDate(internacao.dataEntrada) : internacao.dataEntrada}
                                 </span>
                             </div>
@@ -251,7 +243,6 @@ const EvolucaoInternacaoModal = ({
                         )}
                     </div>
 
-                    {/* Botões de ação */}
                     <div className="flex flex-col sm:flex-row justify-between gap-3 pt-4 border-t border-border">
                         <Button
                             type="button"
