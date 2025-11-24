@@ -8,7 +8,7 @@
 
 ## 📄 Sobre o Projeto
 
-O **Vitalys** é um sistema completo de gestão hospitalar desenvolvido como trabalho acadêmico. O objetivo é informatizar o fluxo de atendimento clínico, otimizando processos desde a chegada do paciente na recepção, passando pela triagem e atendimento médico, até a solicitação de internação ou alta hospitalar.
+O **Vitalys** é um sistema completo de gestão hospitalar. O objetivo é informatizar o fluxo de atendimento clínico, otimizando processos desde a chegada do paciente na recepção, passando pela triagem e atendimento médico, até a solicitação de internação ou alta hospitalar.
 
 O sistema foca na experiência do usuário, oferecendo interfaces intuitivas para médicos e recepcionistas, garantindo integridade de dados e agilidade no fluxo hospitalar.
 
@@ -143,11 +143,11 @@ npm run dev
 
 ## 👥 Integrantes da Equipe
 
-Trabalho desenvolvido para a disciplina de Banco de Dados / Desenvolvimento Web da Unoesc.
+Conheça os membros da equipe que desenvolveram este projeto:
 
-| Foto | Nome | Função | Contato |
-| :---: | :--- | :--- | :---: |
-| <img src="./integrantes/alexandre.png" width="50px" height="50px" style="border-radius:50%"> | **Alexandre Luft Duarte** |
-| <img src="./integrantes/ivan.png" width="50px" height="50px" style="border-radius:50%"> | **Ivan Lopes Nerilo** |
-| <img src="./integrantes/rafael.png" width="50px" height="50px" style="border-radius:50%"> | **Rafael Vivian** | 
-| <img src="./integrantes/gabriel.png" width="50px" height="50px" style="border-radius:50%"> | **Gabriel Werner** | 
+| Foto                                 | Nome                  |
+| :-----------------------------------: | :-------------------- |
+| ![Foto de Alexandre Luft Duarte](fotos/alexandre.png) | Alexandre Luft Duarte |
+| ![Foto de Ivan Lopes Nerilo](fotos/ivan.png)         | Ivan Lopes Nerilo     |
+| ![Foto de Rafael Gustavo Vivian](fotos/rafael.png) | Rafael Gustavo Vivian |
+| ![Foto de Rafael Gustavo Vivian](fotos/gabriel.png) | Gabriel Morin Werner |
