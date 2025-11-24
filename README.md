@@ -147,7 +147,7 @@ Conheça os membros da equipe que desenvolveram este projeto:
 
 | Foto                                 | Nome                  |
 | :-----------------------------------: | :-------------------- |
-| ![Foto de Alexandre Luft Duarte](fotos/alexandre.png) | Alexandre Luft Duarte |
-| ![Foto de Ivan Lopes Nerilo](fotos/ivan.png)         | Ivan Lopes Nerilo     |
-| ![Foto de Rafael Gustavo Vivian](fotos/rafael.png) | Rafael Gustavo Vivian |
-| ![Foto de Rafael Gustavo Vivian](fotos/gabriel.png) | Gabriel Morin Werner |
+| ![Foto de Alexandre Luft Duarte](/integrantes/alexandre.png) | Alexandre Luft Duarte |
+| ![Foto de Ivan Lopes Nerilo](/integrantes/ivan.png)         | Ivan Lopes Nerilo     |
+| ![Foto de Rafael Gustavo Vivian](/integrantes/rafael.png) | Rafael Gustavo Vivian |
+| ![Foto de Rafael Gustavo Vivian](/integrantes/gabriel.png) | Gabriel Morin Werner |
