@@ -35,7 +35,8 @@ INSERT INTO pessoa (id_pessoa, nome_completo, cpf, data_nascimento, status_ativo
                                                                                       (6, 'Carlos Paciente', '666.666.666-66', '1960-01-10', true),
                                                                                       (7, 'Ana Doente', '777.777.777-77', '1988-12-25', true),
                                                                                       (8, 'Pedro Quebrado', '888.888.888-88', '2010-06-30', true),
-                                                                                      (9, 'Julia Febre', '999.999.999-99', '2015-09-09', true);
+                                                                                      (9, 'Julia Febre', '999.999.999-99', '2015-09-09', true),
+(10, 'Ivan Nerilo', '070-755-309-17', '2005-11-16', true);
 
 
 -- Endereços
@@ -62,7 +63,8 @@ INSERT INTO usuario (id_pessoa, email, senha) VALUES
 INSERT INTO usuario (id_pessoa, email, senha) VALUES
                                                   (3, 'house@vitalys.com', 'vicodin'),
                                                   (4, 'grey@vitalys.com', 'anatomy'),
-                                                  (5, 'shaun@vitalys.com', 'autism');
+                                                  (5, 'shaun@vitalys.com', 'autism'),
+(10, 'ivannerilo05@gmail.com', '123123');
 
 -- Tabela Recepcionista (IDs 1 e 2)
 INSERT INTO recepcionista (id_pessoa) VALUES
@@ -73,7 +75,8 @@ INSERT INTO recepcionista (id_pessoa) VALUES
 INSERT INTO profissional (id_pessoa, id_departamento) VALUES
                                                            (3, 1), -- House: Clínico Geral
                                                            (4, 2), -- Grey: Pediatra
-                                                           (5, 4); -- Shaun: Cardiologista
+                                                           (5, 4), -- Shaun: Cardiologista
+                                                           (10, 2);
 
 -- Tabela Paciente (IDs 6, 7, 8 e 9)
 INSERT INTO paciente (id_pessoa, descricao_medica) VALUES

@@ -11,7 +11,8 @@ interface Paciente {
     nome: string;
     horaChegada: string;
     motivoVisita: string;
-    status: "Aguardando" | "Em Atendimento" | "Finalizado";
+    status: "Aguardando" | "Em Atendimento" | "Finalizado",
+    nomeProfissional: string;
 }
 
 interface AtendimentoBackend {
@@ -19,7 +20,8 @@ interface AtendimentoBackend {
     dataHora: string;
     status: string; 
     motivo: string;
-    nomePaciente: string; // <--- Mudou aqui! Vem direto agora.
+    nomePaciente: string;
+    nomeProfissional: string;// <--- Mudou aqui! Vem direto agora.
 }
 
 interface PacienteDisplay {
@@ -27,7 +29,8 @@ interface PacienteDisplay {
     nome: string;
     horaChegada: string;
     motivoVisita: string;
-    status: "Aguardando" | "Em Atendimento" | "Finalizado";
+    status: "Aguardando" | "Em Atendimento" | "Finalizado",
+    nomeProfissional: string;
 }
 
 
@@ -37,28 +40,25 @@ const DashboardProfissional = () => {
     const { toast } = useToast();
     const [loading, setLoading] = useState(true);
     const tipoUsuario = window.localStorage.getItem("tipoUsuario");
+    const [dadosProfissional, setDadosProfissional] = useState<any>(null);
 
-    // --- 1. BUSCAR DADOS DO BANCO ---
     const fetchAtendimentos = async () => {
         try {
-            // Busca todos os atendimentos (você pode filtrar por status na URL se preferir)
-            const response = await fetch("http://localhost:8080/api/atendimentos");
+            const response = await fetch(`http://localhost:8080/api/atendimentos/${dadosProfissional.departamento.idDepartamento}/departamento`);
             if (!response.ok) throw new Error("Falha ao buscar");
             
             const data: AtendimentoBackend[] = await response.json();
-            
-            // Filtra apenas os que não estão finalizados para o Dashboard
+            console.log("data", data);
             const ativos = data.filter(a => a.status !== "FINALIZADO");
 
-            // Mapeia do formato Java para o formato da Tabela React
+            console.log("ativos", ativos);
             const formatados: PacienteDisplay[] = ativos.map(item => ({
                 id: item.idAtendimento,
                 nome: item.nomePaciente,
-                // Formata a data ISO (2024-03-15T08:00:00) para Hora (08:00)
                 horaChegada: new Date(item.dataHora).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 motivoVisita: item.motivo || "Sem motivo registrado",
-                // Converte ENUM (AGUARDANDO) para Texto Bonito (Aguardando)
-                status: mapStatus(item.status)
+                status: mapStatus(item.status),
+                nomeProfissional: item.nomeProfissional
             }));
             setPacientes(formatados);
         } catch (error) {
@@ -67,11 +67,6 @@ const DashboardProfissional = () => {
             setLoading(false); 
         }
     };
-
-    useEffect(() => {
-        fetchAtendimentos();
-    }, []);
-
     // Auxiliar para converter o Status
     const mapStatus = (statusBackend: string): PacienteDisplay["status"] => {
         if (statusBackend === "EM_ATENDIMENTO") return "Em Atendimento";
@@ -113,10 +108,9 @@ const DashboardProfissional = () => {
         }, 1000);
     };
 
-    const handleLogout = () => {
-        console.log("Logout");
-        window.location.href = "/";
-    };
+    function abrirAtendimento(id: number) {
+        navigate(`/atendimento-clinico/${id}`);
+    }
 
     const getStatusBadge = (status: Paciente["status"]) => {
         const variants: Record<Paciente["status"], { className: string; text: string }> = {
@@ -141,6 +135,22 @@ const DashboardProfissional = () => {
             </Badge>
         );
     };
+
+    async function buscarDadosProfissional() {
+        const idUsuario = window.localStorage.getItem("idUsuario");
+        const response = await fetch(`http://localhost:8080/api/profissional/${idUsuario}`);
+
+        const data = await response.json();
+        setDadosProfissional(data);
+    }
+
+    useEffect(() => {
+        buscarDadosProfissional();
+    }, []);
+
+    useEffect(() => {
+        if (dadosProfissional) fetchAtendimentos();
+    }, [dadosProfissional]);
 
     const pacientesAguardando = pacientes.filter((p) => p.status === "Aguardando").length;
     const pacientesEmAtendimento = pacientes.filter((p) => p.status === "Em Atendimento").length;
@@ -167,7 +177,7 @@ const DashboardProfissional = () => {
                     {/* Cabeçalho da Tabela */}
                     <div className="bg-gradient-to-r from-primary to-accent px-6 py-4">
                         <h2 className="text-xl font-bold text-primary-foreground">
-                            Pacientes na Fila
+                            Pacientes na Fila - {dadosProfissional?.departamento?.nome}
                         </h2>
                         <p className="text-sm text-primary-foreground/80 mt-1">
                             Gerencie seus atendimentos de forma eficiente
@@ -193,11 +203,12 @@ const DashboardProfissional = () => {
                             <Table>
                                 <TableHeader>
                                     <TableRow className="border-b border-border hover:bg-transparent">
-                                        <TableHead className="font-semibold text-foreground w-[30%]">Paciente</TableHead>
+                                        <TableHead className="font-semibold text-foreground w-[20%]">Paciente</TableHead>
                                         <TableHead className="font-semibold text-foreground w-[12%]">Hora</TableHead>
-                                        <TableHead className="font-semibold text-foreground w-[35%]">Motivo</TableHead>
-                                        <TableHead className="font-semibold text-foreground w-[15%]">Status</TableHead>
-                                        <TableHead className="font-semibold text-foreground w-[8%] text-center">Ação</TableHead>
+                                        <TableHead className="font-semibold text-foreground w-[15%]">Motivo</TableHead>
+                                        <TableHead className="font-semibold text-foreground w-[25%]">Responsavel</TableHead>
+                                        <TableHead className="font-semibold text-foreground w-[20%]">Status</TableHead>
+                                        <TableHead className="font-semibold text-foreground w-[10%] text-center">Ação</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -206,17 +217,20 @@ const DashboardProfissional = () => {
                                             <TableCell className="font-medium text-foreground">{paciente.nome}</TableCell>
                                             <TableCell className="text-muted-foreground">{paciente.horaChegada}</TableCell>
                                             <TableCell className="text-muted-foreground">{paciente.motivoVisita}</TableCell>
+                                            <TableCell className="text-muted-foreground">{paciente.nomeProfissional}</TableCell>
                                             <TableCell>{getStatusBadge(paciente.status)}</TableCell>
-                                            <TableCell className="text-center">
-                                                {paciente.status === "Aguardando" ? (
+                                            {paciente.status === "Aguardando" ? (
+                                                <TableCell className="text-center">
                                                     <Button size="sm" onClick={() => handleChamarPaciente(paciente.id)} className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity font-semibold shadow-sm">
                                                         Chamar
                                                     </Button>
-                                                ) : null}
-                                                {paciente.status === "Em Atendimento" ? (
+                                                </TableCell>
+                                            ) : null}
+                                            {paciente.status === "Em Atendimento" ? (
+                                                <TableCell className="text-center" onClick={() => abrirAtendimento(paciente.id)}>
                                                     <span className="text-xs text-muted-foreground italic">Atendendo</span>
-                                                ) : null}
-                                            </TableCell>
+                                                </TableCell>
+                                            ) : null}
                                         </TableRow>
                                     ))}
                                 </TableBody>

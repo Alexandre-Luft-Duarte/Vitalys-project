@@ -10,5 +10,9 @@ public interface AtendimentoRepository extends JpaRepository<Atendimento, Long> 
     List<Atendimento> findByStatus(StatusAtendimento status);
 
     List<Atendimento> findByPacienteIdPessoa(Long pacienteId);
+
+    List<Atendimento> findByDepartamentoIdDepartamento(Long departamentoId);
+
+    List<Atendimento> findByPacienteIdPessoaAndStatus(Long pacienteId, StatusAtendimento status);
 }
 

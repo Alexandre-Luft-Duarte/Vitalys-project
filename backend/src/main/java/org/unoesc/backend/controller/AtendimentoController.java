@@ -19,21 +19,17 @@ import org.springframework.web.bind.annotation.RequestBody; // Importa todos os 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import org.unoesc.backend.dto.AnotacaoRequestDTO;
-import org.unoesc.backend.dto.AtendimentoClinicoDTO;
-import org.unoesc.backend.dto.AtendimentoRequestDTO;
-import org.unoesc.backend.dto.FilaAtendimentosDTO;
+import org.unoesc.backend.dto.*;
 import org.unoesc.backend.model.AnotacaoMedica;
 import org.unoesc.backend.model.Atendimento;
 import org.unoesc.backend.model.Departamento;
 import org.unoesc.backend.model.Paciente;
 import org.unoesc.backend.model.Profissional;
 import org.unoesc.backend.model.StatusAtendimento;
-import org.unoesc.backend.repository.AnotacaoMedicaRepository;
-import org.unoesc.backend.repository.AtendimentoRepository;
-import org.unoesc.backend.repository.DepartamentoRepository;
-import org.unoesc.backend.repository.PacienteRepository;
-import org.unoesc.backend.repository.ProfissionalRepository;
+import org.unoesc.backend.model.Recepcionista;
+import org.unoesc.backend.model.Internacao;
+import org.unoesc.backend.repository.*;
+
 
 @RestController
 @RequestMapping("/api/atendimentos")
@@ -47,6 +43,7 @@ public class AtendimentoController {
     @Autowired private ProfissionalRepository profissionalRepository;
     @Autowired private AnotacaoMedicaRepository anotacaoMedicaRepository;
     @Autowired private RecepcionistaRepository recepcionistaRepository;
+    @Autowired private InternacaoRepository internacaoRepository;
 
     /**
      *  Registrar Entrada de Paciente
@@ -103,11 +100,33 @@ public class AtendimentoController {
                 at.getPaciente().getNomeCompleto(),
                 at.getDataHora(),
                 at.getMotivo(),           // Agora isso vai funcionar pois alteramos a Entidade no Passo 1
-                at.getStatus().toString()
+                at.getStatus().toString(),
+                at.getProfissional().getNomeCompleto()
             ))
             .collect(Collectors.toList());
 
 
+        return ResponseEntity.ok(listaDTO);
+    }
+
+    /**
+     *  Visualizar Fila de Pacientes
+     * Lista atendimentos. Pode filtrar por status (ex: /api/atendimentos?status=AGUARDANDO)
+     */
+    @GetMapping("/{idDepartamento}/departamento")
+    public ResponseEntity<List<FilaAtendimentosDTO>> listarAtendimentosByDepartamento(@PathVariable Long idDepartamento) {
+        List<Atendimento> listaCompleta = atendimentoRepository.findByDepartamentoIdDepartamento(idDepartamento);
+
+        List<FilaAtendimentosDTO> listaDTO = listaCompleta.stream()
+                .map(at -> new FilaAtendimentosDTO(
+                        at.getIdAtendimento(),
+                        at.getPaciente().getNomeCompleto(),
+                        at.getDataHora(),
+                        at.getMotivo(),           // Agora isso vai funcionar pois alteramos a Entidade no Passo 1
+                        at.getStatus().toString(),
+                        (at.getProfissional() != null) ? at.getProfissional().getNomeCompleto() : null
+                ))
+                .collect(Collectors.toList());
         return ResponseEntity.ok(listaDTO);
     }
 
@@ -172,13 +191,32 @@ public class AtendimentoController {
      * Retorna todos os atendimentos (passados e presentes) de um paciente.
      */
     @GetMapping("/paciente/{pacienteId}")
-    public ResponseEntity<List<Atendimento>> getHistoricoPaciente(@PathVariable Long pacienteId) {
+    public ResponseEntity<List<HistoricoAtendimentoDTO>> getHistoricoPaciente(@PathVariable Long pacienteId) {
 
-        // **AÇÃO NECESSÁRIA:** Adicione este método na sua interface AtendimentoRepository:
-        // List<Atendimento> findByPacienteIdPessoa(Long pacienteId);
-        List<Atendimento> historico = atendimentoRepository.findByPacienteIdPessoa(pacienteId);
+        // 1. Busca os Atendimentos (Consultas)
+        List<Atendimento> atendimentos = atendimentoRepository.findByPacienteIdPessoaAndStatus(
+                pacienteId,
+                StatusAtendimento.FINALIZADO
+        );
 
-        return ResponseEntity.ok(historico);
+        // 2. Busca as Internações (Todas desse paciente)
+        List<Internacao> internacoes = internacaoRepository.findByPacienteIdPessoa(pacienteId);
+
+        // 3. Cruza os dados
+        List<HistoricoAtendimentoDTO> historicoCompleto = atendimentos.stream()
+                .map(at -> {
+                    // Tenta achar a internação que foi gerada por ESTE atendimento (at)
+                    Internacao internacaoVinculada = internacoes.stream()
+                            .filter(it -> it.getAtendimento().getIdAtendimento().equals(at.getIdAtendimento()))
+                            .findFirst() // Pega a primeira (deve ser única)
+                            .orElse(null); // Se não achar, retorna null
+
+                    // Cria o DTO com o par (Atendimento + Internacao ou Null)
+                    return new HistoricoAtendimentoDTO(at, internacaoVinculada);
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(historicoCompleto);
     }
 
     /**
@@ -208,7 +246,8 @@ public class AtendimentoController {
                     p.getCpf(),                  // 5. String cpf
                     idade,                       // 6. Integer idade
                     p.getDataNascimento(),
-                    at.getProfissional().getIdPessoa()// 7. LocalDate dataNascimento
+                    at.getProfissional().getIdPessoa(),
+                    at.getDepartamento().getIdDepartamento()// 7. LocalDate dataNascimento
             );
 
             return ResponseEntity.ok(dto);

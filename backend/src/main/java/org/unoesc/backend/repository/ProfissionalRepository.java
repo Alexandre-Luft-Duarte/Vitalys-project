@@ -6,4 +6,6 @@ import org.unoesc.backend.model.Profissional;
 
 @Repository
 public interface ProfissionalRepository extends JpaRepository<Profissional, Long> {
+    Profissional findByIdPessoa(Long idPessoa);
+
 }

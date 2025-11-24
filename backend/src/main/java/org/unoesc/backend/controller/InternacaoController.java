@@ -21,6 +21,10 @@ public class InternacaoController {
     @Autowired private EvolucaoInternacaoRepository evolucaoRepository;
     @Autowired private PacienteRepository pacienteRepository;
     @Autowired private ProfissionalRepository profissionalRepository;
+    @Autowired private AtendimentoRepository atendimentoRepository;
+    @Autowired private DepartamentoRepository departamentoRepository;
+
+
 
     /**
      * UC-05 (Fluxo 1): Solicitar Internação
@@ -36,13 +40,22 @@ public class InternacaoController {
         Profissional profissional = profissionalRepository.findById(request.profissionalId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profissional não encontrado"));
 
+        Atendimento atendimento = atendimentoRepository.findById(request.atendimentoId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Atendimento não encontrado"));
+
+        Departamento departamento = departamentoRepository.findById(request.departamentoId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Departamento não encontrado"));
+
         // 2. Criar nova Internacao
         Internacao novaInternacao = new Internacao();
         novaInternacao.setPaciente(paciente);
-        novaInternacao.setProfissional(profissional); // Profissional responsável pela internação
+        novaInternacao.setProfissional(profissional);
+        novaInternacao.setDepartamento(departamento);
+        novaInternacao.setAtendimento(atendimento);// Profissional responsável pela internação
         novaInternacao.setDataEntrada(LocalDateTime.now());
-        novaInternacao.setStatus(StatusInternacao.ATIVA); // Status inicial
+        novaInternacao.setStatus(StatusInternacao.ATIVA);
 
+        atendimento.setStatus(StatusAtendimento.FINALIZADO);
         // 3. Salvar
         Internacao internacaoSalva = internacaoRepository.save(novaInternacao);
 

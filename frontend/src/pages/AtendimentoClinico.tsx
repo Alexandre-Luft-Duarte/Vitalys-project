@@ -29,7 +29,7 @@ interface PacienteData {
     nomeCompleto: string;
     cpf: string;
     dataNascimento: string;
-    // Adicione outros campos que vêm do PacienteController se precisar
+    descricaoMedica: string;
 }
 
 const AtendimentoClinico = () => {
@@ -40,11 +40,11 @@ const AtendimentoClinico = () => {
     const [evolucao, setEvolucao] = useState("");
     const [prescricao, setPrescricao] = useState("");
     const [exames, setExames] = useState("");
-    const [modalInternacaoOpen, setModalInternacaoOpen] = useState(false);
-    const [modalAltaMedicaOpen, setModalAltaMedicaOpen] = useState(false);
-    const [atendimento, setAtendimento] = useState<AtendimentoData | null>(null);
+    const [atendimento, setAtendimento] = useState<any>(null);
     const [paciente, setPaciente] = useState<PacienteData | null>(null);
+    const [modalAltaMedicaOpen, setModalAltaMedicaOpen] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [historicoClinico, setHistoricoClinico] = useState();
 
 
     useEffect(() => {
@@ -67,6 +67,12 @@ const AtendimentoClinico = () => {
                     const dadosPaciente: PacienteData = await respPaciente.json();
                     console.log("dadosPaciente", dadosPaciente);
                     setPaciente(dadosPaciente);
+
+                    const respHistorico = await fetch(`http://localhost:8080/api/atendimentos/paciente/${dadosAtendimento.idPessoa}`);
+                    if (!respHistorico.ok) throw new Error("Erro ao buscar paciente");
+                    const dadosHistorico = await respHistorico.json();
+                    console.log("dadosHistorico", dadosHistorico);
+                    setHistoricoClinico(dadosHistorico);
                 }
 
             } catch (error) {
@@ -92,14 +98,14 @@ const AtendimentoClinico = () => {
 
         try {
             // ID do profissional fixo em 1 para teste (ou pegue do login se tiver)
-            const profissionalId = 1; 
+            const profissionalId = window.localStorage.getItem("idUsuario");
 
             const response = await fetch(`http://localhost:8080/api/atendimentos/${id}/anotacoes`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     profissionalId: profissionalId,
-                    textoAnotacao: `Anamnese: ${anamnese}` // Prefixo para identificar no banco
+                    textoAnotacao: anamnese
                 })
             });
 
@@ -110,44 +116,72 @@ const AtendimentoClinico = () => {
                 description: "Anamnese salva na tabela de Anotações Médicas.",
                 variant: "default" // ou className="bg-green-500"
             });
-            
-            // Opcional: Limpar campo ou manter
-            // setAnamnese(""); 
-
+            setAnamnese("");
         } catch (error) {
             console.error(error);
             toast({ title: "Erro", description: "Falha ao salvar anotação.", variant: "destructive" });
         }
     };
 
-    // const handleSolicitarInternacao = () => {
-    //     setModalInternacaoOpen(true);
-    // };
-
-    const handleFinalizarAtendimento = () => {
-        if (!anamnese && !evolucao && !prescricao && !exames) {
-            toast({
-                title: "Atenção",
-                description: "Preencha ao menos uma seção antes de finalizar.",
-                variant: "destructive",
-            });
-            return;
-        }
-
-        // Abrir modal de alta médica
+    const handleFinalizarAtendimento = async () => {
         setModalAltaMedicaOpen(true);
     };
 
-    const handleConfirmarAlta = () => {
+    const handleConfirmarAlta = async () => {
+        const response = await fetch(`http://localhost:8080/api/atendimentos/${id}/finalizar`, {
+            method: "PUT",
+        })
+
+        if (!response.ok) {
+            toast({
+                title: "Erro ao finalizar o atendimento!",
+                description: "Verifique a sua conexão e tente novamente.",
+                variant: "destructive",
+            });
+        }
+
         toast({
             title: "Atendimento Finalizado",
-            description: `Atendimento de ${pacienteAtual.nome} registrado com sucesso.`,
+            description: `Atendimento de ${paciente?.nomeCompleto} registrado com sucesso.`,
         });
 
         setTimeout(() => {
             navigate("/dashboard-profissional");
         }, 1500);
     };
+
+    async function handleSolicitarInternacao() {
+        const response = await fetch(`http://localhost:8080/api/internacoes`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                pacienteId: paciente?.idPessoa,
+                atendimentoId: atendimento?.idAtendimento,
+                profissionalId: window.localStorage.getItem("idUsuario"),
+                departamentoId: atendimento.idDepartamento
+            })
+        })
+
+        if (!response.ok) {
+            toast({
+                title: "Erro ao soliciatar internação!",
+                description: "Verifique a sua conexão e tente novamente.",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        toast({
+            title: "Internação iniciada!",
+            description: `Internação de ${paciente?.nomeCompleto} registrada com sucesso.`,
+        });
+
+        setTimeout(() => {
+            navigate("/pacientes-internados");
+        }, 1500);
+    }
 
     const getTipoIcon = (tipo: string) => {
         switch (tipo) {
@@ -166,8 +200,6 @@ const AtendimentoClinico = () => {
         switch (tipo) {
             case "Consulta":
                 return "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800";
-            case "Exame":
-                return "bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-800";
             case "Internação":
                 return "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-800";
             default:
@@ -194,52 +226,40 @@ const AtendimentoClinico = () => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
             {/* Cabeçalho */}
-            <header className="bg-card border-b border-border shadow-sm sticky top-0 z-10">
-                <div className="px-6 py-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => navigate("/dashboard-profissional")}
-                                className="text-muted-foreground hover:text-foreground"
-                            >
-                                <ArrowLeft className="h-4 w-4 mr-2" />
-                                Voltar
-                            </Button>
-                            <Separator orientation="vertical" className="h-8" />
-                            <div>
-                                <h1 className="text-xl font-bold text-foreground">
-                                    Atendimento Clínico
-                                </h1>
-                                <p className="text-sm text-muted-foreground">
-                                    {paciente.nomeCompleto} • {atendimento.motivo || "Sem queixa registrada"}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                            <Button
-                                variant="outline"
-                                // onClick={handleSolicitarInternacao}
-                                className="h-10 px-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                            >
-                                <ClipboardPlus className="h-4 w-4 mr-2" />
-                                Solicitar Internação
-                            </Button>
-                            <Button
-                                // onClick={handleFinalizarAtendimento}
-                                className="h-10 px-6 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity font-semibold"
-                            >
-                                <CheckCircle className="h-4 w-4 mr-2" />
-                                Finalizar Atendimento
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            </header>
 
             {/* Layout de 3 Colunas */}
+            <div className="px-6 py-6"> {/* px-6 já equivale a 1.5rem (24px) */}
+                {/* Alterado de 'justify-between' para 'justify-end' */}
+                <div className="flex items-center justify-end">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => navigate("/dashboard-profissional")}
+                        className="text-muted-foreground hover:text-foreground justify-start"
+                    >
+                        <ArrowLeft className="h-4 w-4 mr-2" />
+                        Voltar
+                    </Button>
+                    <div className="flex items-center gap-3">
+                        <Button
+                            variant="outline"
+                            onClick={handleSolicitarInternacao}
+                            className="h-10 px-4 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                        >
+                            <ClipboardPlus className="h-4 w-4 mr-2" />
+                            Solicitar Internação
+                        </Button>
+                        <Button
+                            onClick={handleFinalizarAtendimento}
+                            className="h-10 px-6 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity font-semibold"
+                        >
+                            <CheckCircle className="h-4 w-4 mr-2" />
+                            Finalizar Atendimento
+                        </Button>
+                    </div>
+                </div>
+            </div>
+
             <main className="p-6 grid grid-cols-12 gap-6">
                 {/* Coluna Esquerda - Resumo do Paciente (Fixa) */}
                 <aside className="col-span-12 lg:col-span-3">
@@ -295,7 +315,7 @@ const AtendimentoClinico = () => {
                                     <p className="text-xs font-semibold text-destructive">{paciente.descricaoMedica}</p>
                                 </div>
                             </div>
-                            
+
                         </CardContent>
                     </Card>
                 </aside>
@@ -325,9 +345,9 @@ const AtendimentoClinico = () => {
                                             onChange={(e) => setAnamnese(e.target.value)}
                                             className="min-h-[400px] resize-none text-sm"
                                         />
-                                        
+
                                         <div className="flex justify-end py-4">
-                                            <Button 
+                                            <Button
                                                 onClick={handleSalvarAnamnese}
                                                 className="bg-primary hover:bg-primary/90 text-white font-bold"
                                             >
@@ -398,43 +418,81 @@ const AtendimentoClinico = () => {
                             </p>
                         </CardHeader>
                         <CardContent className="p-0">
-                            /*<ScrollArea className="h-[calc(100vh-250px)]">
+                            <ScrollArea className="h-[calc(100vh-250px)]">
                                 <div className="p-4 space-y-4">
-                                    {/* {historicoClinico.map((item, index) => ( */}
-                                        {/* // <div key={item.id} className="relative animate-fade-in"> */}
-                                            {/* Linha vertical */}
-                                            {/* {index < historicoClinico.length - 1 && ( */}
-                                                {/* // <div className="absolute left-4 top-8 bottom-0 w-0.5 bg-border" /> */}
-                                            {/* // )} */}
+                                    {historicoClinico && historicoClinico.map((historico: any, index: number) => {
+                                        // 1. Extração dos objetos principais
+                                        const { atendimento, internacao } = historico;
 
-                                            {/* <div className="flex gap-3"> */}
-                                                {/* Ícone do tipo */}
-                                                {/* <div className={`h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 relative z-10 ${getTipoBadgeClass(item.tipo)}`}> */}
-                                                    {/* {getTipoIcon(item.tipo)} */}
-                                                {/* </div> */}
+                                        // 2. Determinar se é Internação ou Consulta/Atendimento
+                                        // Se o objeto 'internacao' existir e não for null, consideramos Internação
+                                        const isInternacao = !!internacao;
+                                        const tipo = isInternacao ? "Internação" : "Consulta";
 
-                                                {/* Conteúdo */}
-                                                {/* <div className="flex-1 pb-4"> */}
-                                                    {/* <div className="flex items-start justify-between mb-1"> */}
-                                                        {/* <Badge variant="outline" className={`${getTipoBadgeClass(item.tipo)} text-xs`}> */}
-                                                            {/* {item.tipo} */}
-                                                        {/* </Badge> */}
-                                                        {/* <span className="text-xs text-muted-foreground">{item.data}</span> */}
-                                                    {/* </div> */}
+                                        // 3. Normalização dos dados para exibição
+                                        const dataEvento = isInternacao
+                                            ? internacao.dataEntrada
+                                            : atendimento.dataHora;
 
-                                                    {/* <h4 className="text-sm font-semibold text-foreground mt-2"> */}
-                                                        {/* {item.diagnostico} */}
-                                                    {/* </h4> */}
-                                                    {/* <p className="text-xs text-muted-foreground mt-1"> */}
-                                                        {/* {item.profissional} • {item.departamento} */}
-                                                    {/* </p> */}
-                                                    {/* <p className="text-xs text-muted-foreground mt-2 leading-relaxed"> */}
-                                                        {/* {item.resumo} */}
-                                                    {/* </p> */}
-                                                {/* </div> */}
-                                            {/* </div> */}
-                                        {/* </div> */}
-                                    {/* ))} */}
+                                        const motivo = atendimento.motivo || "Sem motivo registrado";
+
+                                        // Pega o profissional da internação se houver, senão do atendimento
+                                        const profissionalNome = isInternacao
+                                            ? internacao.profissional?.nomeCompleto
+                                            : atendimento.profissional?.nomeCompleto;
+
+                                        const departamentoNome = isInternacao
+                                            ? internacao.departamento?.nome
+                                            : atendimento.departamento?.nome;
+
+                                        // Formatação de data simples (ajuste conforme seu helper formatDate)
+                                        const dataFormatada = new Date(dataEvento).toLocaleDateString('pt-BR', {
+                                            day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                                        });
+
+                                        return (
+                                            <div key={atendimento.idAtendimento} className="relative animate-fade-in">
+                                                {/* Linha vertical de conexão */}
+                                                {index < historicoClinico.length - 1 && (
+                                                    <div className="absolute left-4 top-8 bottom-0 w-0.5 bg-border" />
+                                                )}
+
+                                                <div className="flex gap-3">
+                                                    {/* Ícone do tipo */}
+                                                    <div className={`h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 relative z-10 ${getTipoBadgeClass(tipo)}`}>
+                                                        {getTipoIcon(tipo)}
+                                                    </div>
+
+                                                    {/* Conteúdo */}
+                                                    <div className="flex-1 pb-4">
+                                                        <div className="flex items-start justify-between mb-1">
+                                                            <Badge variant="outline" className={`${getTipoBadgeClass(tipo)} text-xs`}>
+                                                                {tipo}
+                                                            </Badge>
+                                                            <span className="text-xs text-muted-foreground capitalize">
+                                    {dataFormatada}
+                                </span>
+                                                        </div>
+
+                                                        <h4 className="text-sm font-semibold text-foreground mt-2">
+                                                            {motivo}
+                                                        </h4>
+
+                                                        <p className="text-xs text-muted-foreground mt-1">
+                                                            {profissionalNome || "Profissional N/A"} • {departamentoNome || "Geral"}
+                                                        </p>
+
+                                                        {/* Exibe anotações ou evoluções se quiser um resumo */}
+                                                        <p className="text-xs text-muted-foreground mt-2 leading-relaxed line-clamp-2">
+                                                            {isInternacao
+                                                                ? `Status: ${internacao.status}`
+                                                                : `Status: ${atendimento.status}`}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </ScrollArea>
                         </CardContent>
@@ -442,20 +500,14 @@ const AtendimentoClinico = () => {
                 </aside>
             </main>
 
-            {/* Modal de Solicitação de Internação */}
-            {/* <SolicitarInternacaoModal
-                open={modalInternacaoOpen}
-                onOpenChange={setModalInternacaoOpen}
-                pacienteNome={pacienteAtual.nome}
-            /> */}
-
             {/* Modal de Registrar Alta Médica */}
-            {/* <RegistrarAltaMedicaModal
+            <RegistrarAltaMedicaModal
                 open={modalAltaMedicaOpen}
                 onOpenChange={setModalAltaMedicaOpen}
-                pacienteNome={pacienteAtual.nome}
+                pacienteNome={paciente.nomeCompleto}
                 onConfirmar={handleConfirmarAlta}
-            /> */}
+                atendimentoId={atendimento.idAtendimento}
+            />
         </div>
     );
 };

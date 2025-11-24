@@ -7,5 +7,6 @@ public record FilaAtendimentosDTO(
     String nomePaciente,
     LocalDateTime dataHora,
     String motivo,
-    String status
+    String status,
+    String nomeProfissional
 ) {}

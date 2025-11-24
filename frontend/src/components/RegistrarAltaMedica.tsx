@@ -10,14 +10,13 @@ import {
     DialogTitle,
 } from "../components/ui/dialog.tsx";
 import { Button } from "./ui/button.tsx";
-import { Input } from "./ui/input.tsx";
 import { Label } from "./ui/label.tsx";
 import { Textarea } from "./ui/textarea.tsx";
 import { useToast } from "../hooks/use-toast.ts";
 import { CheckCircle, FileCheck } from "lucide-react";
 
+// Schema atualizado sem o diagnóstico
 const altaMedicaSchema = z.object({
-    diagnosticoFinal: z.string().trim().min(3, "Diagnóstico deve ter pelo menos 3 caracteres").max(200, "Diagnóstico muito longo"),
     instrucoesPosAlta: z.string().trim().min(10, "Instruções devem ter pelo menos 10 caracteres").max(2000, "Instruções muito longas"),
 });
 
@@ -27,6 +26,7 @@ interface RegistrarAltaMedicaModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     pacienteNome: string;
+    atendimentoId: number; // Adicionado ID do atendimento para a URL
     onConfirmar: () => void;
 }
 
@@ -34,6 +34,7 @@ const RegistrarAltaMedicaModal = ({
                                       open,
                                       onOpenChange,
                                       pacienteNome,
+                                      atendimentoId,
                                       onConfirmar,
                                   }: RegistrarAltaMedicaModalProps) => {
     const { toast } = useToast();
@@ -51,23 +52,47 @@ const RegistrarAltaMedicaModal = ({
     const onSubmit = async (data: AltaMedicaFormData) => {
         setIsSubmitting(true);
 
-        // Simular registro de alta médica
-        setTimeout(() => {
-            console.log("Alta médica registrada:", {
-                paciente: pacienteNome,
-                ...data,
+        try {
+            // Tenta pegar o ID do usuário logado (fallback para 1 se não existir)
+            const profissionalId = localStorage.getItem("idUsuario");
+
+            const payload = {
+                textoAnotacao: `ALTA MÉDICA: ${data.instrucoesPosAlta}`, // Prefixo opcional para identificar que é alta
+                profissionalId: Number(profissionalId)
+            };
+
+            const response = await fetch(`http://localhost:8080/api/atendimentos/${atendimentoId}/anotacoes`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload)
             });
+
+            if (!response.ok) {
+                throw new Error("Falha ao registrar alta médica.");
+            }
 
             toast({
                 title: "Alta Médica Registrada",
-                description: `Alta médica de ${pacienteNome} foi registrada com sucesso.`,
+                description: `As instruções de alta para ${pacienteNome} foram salvas.`,
+                className: "bg-green-600 text-white border-none"
             });
 
-            setIsSubmitting(false);
             reset();
             onOpenChange(false);
-            onConfirmar();
-        }, 1000);
+            onConfirmar(); // Chama a função do pai para redirecionar ou atualizar tela
+
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: "Erro ao registrar",
+                description: "Não foi possível salvar as informações de alta. Tente novamente.",
+                variant: "destructive"
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const handleCancel = () => {
@@ -86,7 +111,7 @@ const RegistrarAltaMedicaModal = ({
                         <div>
                             <DialogTitle className="text-2xl">Registrar Alta Médica</DialogTitle>
                             <DialogDescription className="mt-1">
-                                Finalize o atendimento com o diagnóstico e orientações ao paciente
+                                Finalize o atendimento com as orientações ao paciente.
                             </DialogDescription>
                         </div>
                     </div>
@@ -99,27 +124,10 @@ const RegistrarAltaMedicaModal = ({
                         <p className="text-sm font-semibold text-foreground">{pacienteNome}</p>
                     </div>
 
-                    {/* Diagnóstico Final */}
-                    <div className="space-y-2">
-                        <Label htmlFor="diagnosticoFinal" className="text-foreground font-medium">
-                            Diagnóstico Final <span className="text-destructive">*</span>
-                        </Label>
-                        <Input
-                            id="diagnosticoFinal"
-                            placeholder="Ex: Hipertensão arterial sistêmica, Pneumonia bacteriana..."
-                            {...register("diagnosticoFinal")}
-                            className="h-11"
-                            disabled={isSubmitting}
-                        />
-                        {errors.diagnosticoFinal && (
-                            <p className="text-sm text-destructive">{errors.diagnosticoFinal.message}</p>
-                        )}
-                    </div>
-
                     {/* Instruções de Pós-alta */}
                     <div className="space-y-2">
                         <Label htmlFor="instrucoesPosAlta" className="text-foreground font-medium">
-                            Instruções de Pós-alta para o Paciente <span className="text-destructive">*</span>
+                            Instruções de Pós-alta / Anotações Finais <span className="text-destructive">*</span>
                         </Label>
                         <Textarea
                             id="instrucoesPosAlta"
@@ -129,7 +137,7 @@ const RegistrarAltaMedicaModal = ({
                             disabled={isSubmitting}
                         />
                         <p className="text-xs text-muted-foreground">
-                            Estas instruções serão impressas e entregues ao paciente
+                            Este texto será salvo como uma anotação médica vinculada ao atendimento.
                         </p>
                         {errors.instrucoesPosAlta && (
                             <p className="text-sm text-destructive">{errors.instrucoesPosAlta.message}</p>

@@ -4,5 +4,7 @@ package org.unoesc.backend.dto;
 // Baseado nos campos da sua classe Internacao.java
 public record InternacaoRequestDTO(
         Long pacienteId,
-        Long profissionalId
+        Long profissionalId,
+        Long atendimentoId,
+        Long departamentoId
 ) {}

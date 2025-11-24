@@ -61,7 +61,8 @@ const RegistrarAtendimentoModal = ({
 
     const onSubmit = async (data: AtendimentoFormData) => {
         setIsSubmitting(true);
-        const idDepartamento = departamentos?.find((dept: any) => dept.nome = data.departamento)?.idDepartamento;
+        const idDepartamento = departamentos?.find((dept: any) => dept.nome === data.departamento)?.idDepartamento;
+        console.log("Departamento selecionado:", idDepartamento);
         const recepcionistaId = window.localStorage.getItem("idUsuario");
 
         const payload = {

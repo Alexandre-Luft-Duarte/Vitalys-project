@@ -211,13 +211,6 @@ const EvolucaoInternacaoModal = ({
                                 </span>
                             </div>
                             <div className="flex items-center gap-1">
-                                <Bed className="h-3.5 w-3.5 text-muted-foreground" />
-                                <span className="text-muted-foreground">Leito:</span>
-                                <span className="ml-2 text-foreground font-medium">
-                                    {internacao.leito || "Não informado"}
-                                </span>
-                            </div>
-                            <div className="flex items-center gap-1">
                                 <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
                                 <span className="text-muted-foreground">Internação:</span>
                                 <span className="ml-2 text-foreground font-medium">

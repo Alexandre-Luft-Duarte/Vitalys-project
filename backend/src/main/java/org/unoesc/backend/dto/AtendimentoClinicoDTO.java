@@ -10,5 +10,6 @@ public record AtendimentoClinicoDTO(
     String cpf,
     Integer idade,
     LocalDate dataNascimento,
-    Long idProfissional
+    Long idProfissional,
+    Long idDepartamento
 ) {}

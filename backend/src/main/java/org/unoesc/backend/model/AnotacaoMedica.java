@@ -24,7 +24,7 @@ public class AnotacaoMedica {
     private Atendimento atendimento;
 
     @ManyToOne
-    @JoinColumn(name = "id_departamento", nullable = false)
+    @JoinColumn(name = "id_departamento", nullable = true)
     private Departamento departamento;
 
     public AnotacaoMedica(Long idAnotacaoMedica, String textoAnotacao, LocalDateTime dataHora, Atendimento atendimento) {
