@@ -97,7 +97,7 @@ O sistema foca na experiência do usuário, oferecendo interfaces intuitivas par
 ### Backend (API REST)
 - **Linguagem:** Java 17+
 - **Framework:** Spring Boot 3 (Web, Data JPA, Validation)
-- **Arquitetura:** MVC com camadas de DTOs, Services e Controllers.
+- **Arquitetura:** Camadas de DTOs, Models, Repositorys e Controllers.
 - **Banco de Dados:** PostgreSQL 15.
 
 ### Frontend (SPA)
